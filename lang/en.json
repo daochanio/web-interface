@@ -1,0 +1,8 @@
+{
+  "go": {
+    "defaultMessage": "GO"
+  },
+  "hello-world": {
+    "defaultMessage": "Hello World!"
+  }
+}

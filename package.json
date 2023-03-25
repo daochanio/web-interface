@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "extract": "formatjs extract 'src/**/*.ts*' --ignore='**/*.d.ts' --out-file lang/en.json",
+    "compile-folder": "formatjs compile-folder --ast lang src/providers/IntlProvider/lang",
+    "compile-pseudos": "formatjs compile lang/en.json --out-file src/providers/IntlProvider/lang/ro.json --ast --pseudo-locale xx-LS && formatjs compile lang/en.json --out-file src/providers/IntlProvider/lang/hr.json --ast --pseudo-locale en-XA",
+    "intl": "npm run extract && npm run compile-folder && npm run compile-pseudos"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.1.0",
@@ -17,9 +21,11 @@
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-intl": "^6.3.2",
     "sharp": "^0.32.0"
   },
   "devDependencies": {
+    "@formatjs/cli": "^6.0.4",
     "@types/node": "^18.15.9",
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",

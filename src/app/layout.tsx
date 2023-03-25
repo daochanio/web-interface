@@ -1,6 +1,7 @@
 "use client";
 
 import ChakraProvider from "../providers/ChakraProvider";
+import IntlProvider from "../providers/IntlProvider";
 
 export default function RootLayout({
   children,
@@ -37,7 +38,9 @@ export default function RootLayout({
         <title>Daochan</title>
       </head>
       <body>
-        <ChakraProvider>{children}</ChakraProvider>
+        <ChakraProvider>
+          <IntlProvider>{children}</IntlProvider>
+        </ChakraProvider>
       </body>
     </html>
   );

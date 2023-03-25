@@ -1,0 +1,14 @@
+{
+  "go": [
+    {
+      "type": 0,
+      "value": "GO"
+    }
+  ],
+  "hello-world": [
+    {
+      "type": 0,
+      "value": "Hello World!"
+    }
+  ]
+}
