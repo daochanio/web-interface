@@ -32,7 +32,7 @@ const config = {
   components: {
     Text: {
       baseStyle: {
-        color: "gray.100",
+        color: "whiteAlpha.900",
         fontWeight: "500",
       },
     },
@@ -41,9 +41,17 @@ const config = {
         solid: {
           bg: "brand.200",
           fontWeight: "700",
-          color: "white",
+          color: "whiteAlpha.900",
           _hover: {
             bg: "brand.400",
+          },
+        },
+        ghost: {
+          bg: "gray.800",
+          fontWeight: "700",
+          color: "brand.200",
+          _hover: {
+            bg: "gray.900",
           },
         },
       },

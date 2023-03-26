@@ -1,7 +1,5 @@
-"use client";
-
-import ChakraProvider from "../providers/ChakraProvider";
-import IntlProvider from "../providers/IntlProvider";
+import Providers from "../providers/providers";
+import NavBar from "./navbar";
 
 export default function RootLayout({
   children,
@@ -38,9 +36,10 @@ export default function RootLayout({
         <title>Daochan</title>
       </head>
       <body>
-        <ChakraProvider>
-          <IntlProvider>{children}</IntlProvider>
-        </ChakraProvider>
+        <Providers>
+          <NavBar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

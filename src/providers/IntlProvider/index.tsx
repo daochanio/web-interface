@@ -1,3 +1,5 @@
+"use client";
+
 import { IntlProvider as IntlProviderComponent } from "react-intl";
 import translations from "./translations";
 

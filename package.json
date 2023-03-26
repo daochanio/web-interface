@@ -13,6 +13,7 @@
     "intl": "npm run extract && npm run compile-folder && npm run compile-pseudos"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/next-js": "^2.1.0",
     "@chakra-ui/react": "^2.5.3",
     "@emotion/react": "^11.10.6",
@@ -21,8 +22,10 @@
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.8.0",
     "react-intl": "^6.3.2",
-    "sharp": "^0.32.0"
+    "sharp": "^0.32.0",
+    "wagmi": "^0.12.6"
   },
   "devDependencies": {
     "@formatjs/cli": "^6.0.4",
