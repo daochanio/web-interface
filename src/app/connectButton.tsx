@@ -4,8 +4,13 @@ import { useHasMounted } from "@/src/hooks/useHasMounted";
 import { MdLanguage, MdOutlineCancel } from "react-icons/md";
 import {
   Button,
+  Divider,
   Flex,
   Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -63,73 +68,48 @@ function ProfileButton() {
   const intl = useIntl();
   const account = useAccount();
   const shortAddress = useDisplayAddress(account?.address);
-  const { disconnect, isLoading: isDisconnecting } = useDisconnect();
+  const { disconnect } = useDisconnect();
   const { chain } = useNetwork();
-  const { isLoading: isSwitchingNetwork, switchNetwork } = useSwitchNetwork();
+  const { switchNetwork } = useSwitchNetwork();
   const intendedChainId = Number.parseInt(
     process.env.NEXT_PUBLIC_CHAIN_ID ?? ""
   );
 
   return (
-    <Popover trigger={"hover"} placement={"bottom-start"}>
-      <PopoverTrigger>
-        <Button
-          _hover={{
-            textDecoration: "none",
-          }}
-          rightIcon={<ChevronDownIcon />}
-          variant="ghost"
-        >
-          {shortAddress}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        maxWidth={250}
-        border={0}
-        boxShadow={"xl"}
-        bg={"gray.800"}
-        rounded={"xl"}
-      >
+    <Menu>
+      <MenuButton variant="ghost" as={Button} rightIcon={<ChevronDownIcon />}>
+        {shortAddress}
+      </MenuButton>
+      <MenuList>
         {chain?.id !== intendedChainId && switchNetwork && (
-          <Button
-            isLoading={isSwitchingNetwork}
-            onClick={() => switchNetwork(intendedChainId)}
-            variant="ghost"
-            justifyContent="flext-start"
-            leftIcon={
+          <>
+            <MenuItem onClick={() => switchNetwork(intendedChainId)}>
               <Flex alignItems="center">
-                <Icon as={MdLanguage} w={5} h={5} />
+                <Icon as={MdLanguage} w={5} h={5} color="brand.200" />
               </Flex>
-            }
-          >
-            <Text ml={3} color="brand.200">
-              {intl.formatMessage(
-                { id: "switch-network", defaultMessage: "Switch to {chain}" },
-                { chain: "Arbitrum" }
-              )}
-            </Text>
-          </Button>
+              <Text ml={3} color="brand.200">
+                {intl.formatMessage(
+                  { id: "switch-network", defaultMessage: "Switch to {chain}" },
+                  { chain: "Arbitrum" }
+                )}
+              </Text>
+            </MenuItem>
+            <Divider my={2} />
+          </>
         )}
-        <Button
-          isLoading={isDisconnecting}
-          onClick={() => disconnect()}
-          variant="ghost"
-          justifyContent="flext-start"
-          leftIcon={
-            <Flex alignItems="center">
-              <Icon color="red.500" as={MdOutlineCancel} w={5} h={5} />
-            </Flex>
-          }
-        >
+        <MenuItem onClick={() => disconnect()}>
+          <Flex alignItems="center">
+            <Icon color="red.500" as={MdOutlineCancel} w={5} h={5} />
+          </Flex>
           <Text color="red.500" ml={3}>
             {intl.formatMessage({
               id: "disconnect-wallet",
               defaultMessage: "Disconnect Wallet",
             })}
           </Text>
-        </Button>
-      </PopoverContent>
-    </Popover>
+        </MenuItem>
+      </MenuList>
+    </Menu>
   );
 }
 
