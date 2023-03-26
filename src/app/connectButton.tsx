@@ -9,6 +9,7 @@ import {
   Icon,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Modal,
@@ -82,6 +83,7 @@ function ProfileButton() {
         bg="gray.800"
         color="brand.200"
         _hover={{ bg: "gray.900" }}
+        _active={{ bg: "gray.900" }}
         rightIcon={<ChevronDownIcon />}
       >
         {shortAddress}
@@ -100,7 +102,7 @@ function ProfileButton() {
                 )}
               </Text>
             </MenuItem>
-            <Divider my={2} />
+            <MenuDivider />
           </>
         )}
         <MenuItem onClick={() => disconnect()}>

@@ -6,6 +6,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const baseStyle = definePartsStyle({
   list: {
+    border: "1px solid gray.700",
     bg: "gray.900",
   },
   item: {
@@ -13,6 +14,9 @@ const baseStyle = definePartsStyle({
     _hover: {
       bg: "gray.700",
     },
+  },
+  divider: {
+    borderColor: "gray.600",
   },
 });
 
