@@ -5,10 +5,8 @@ import {
   Box,
   Flex,
   Heading,
-  Badge,
   LinkOverlay,
   LinkBox,
-  HStack,
   useDisclosure,
   Stack,
   Collapse,
@@ -18,20 +16,14 @@ import {
   PopoverTrigger,
   Text,
   Link as ChakraLink,
-  Tooltip,
-  IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import {
-  MdMenu,
-  MdClose,
-  MdKeyboardArrowRight,
-  MdKeyboardArrowDown,
-} from "react-icons/md";
+import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import Image from "next/image";
 import ConnectButton from "./connectButton";
 import { Routes } from "../common/routes";
 import { Link } from "@chakra-ui/next-js";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 
 interface NavItem {
   label: string;
@@ -88,81 +80,67 @@ function Navbar() {
         zIndex={2}
         width="100%"
       >
-        <Flex
-          h="7vh"
-          alignItems={"center"}
-          justifyContent={"space-between"}
-          mx={4}
-        >
-          <Flex>
-            <Tooltip
-              label={intl.formatMessage({
-                id: "open-menu",
-                defaultMessage: "Open Menu",
-              })}
-            >
-              <IconButton
-                size="md"
-                mt={1}
-                icon={
-                  <Icon
-                    color="brand.200"
-                    as={isOpen ? MdClose : MdMenu}
-                    w={6}
-                    h={6}
-                  />
-                }
-                bg="inherit"
-                display={{ md: !isOpen ? "none" : "inherit" }}
-                onClick={onToggle}
-                aria-label="open-menu"
-              />
-            </Tooltip>
-            <HStack alignItems={"center"}>
-              <LinkBox>
-                <Flex alignItems="center">
-                  {!isMobile && (
-                    <Image
-                      priority
-                      alt="logo"
-                      src="/1024x1024.png"
-                      width={30}
-                      height={30}
-                    />
-                  )}
-                  <LinkOverlay href="/" as={Link}>
-                    <Heading size="md" as="span" ml={3}>
-                      Daochan
-                    </Heading>
-                  </LinkOverlay>
-                  {!isMobile && (
-                    <Badge colorScheme="brand" ml={3}>
-                      {intl.formatMessage({
-                        id: "alpha",
-                        defaultMessage: "Alpha",
-                      })}
-                    </Badge>
-                  )}
-                  <Box width={30} />
-                </Flex>
-              </LinkBox>
-              {!isMobile && (
-                <Flex>
-                  <DesktopNav navItems={NAV_ITEMS} />
-                </Flex>
-              )}
-            </HStack>
-          </Flex>
-          <ConnectButton />
+        <Flex h="7vh" alignItems={"center"} mx={4}>
+          {isMobile ? (
+            <MobileLogo isOpen={isOpen} onToggle={onToggle} />
+          ) : (
+            <DesktopLogo />
+          )}
+          {!isMobile && <DesktopNav navItems={NAV_ITEMS} />}
+          <Box flexGrow={1} />
+          <Box mt={1}>
+            <ConnectButton />
+          </Box>
         </Flex>
-        <Collapse in={isOpen} animateOpacity>
-          <MobileNav navItems={NAV_ITEMS} onToggleMenu={onToggle} />
-        </Collapse>
+        {isMobile && (
+          <Collapse in={isOpen} animateOpacity>
+            <MobileNav navItems={NAV_ITEMS} onToggleMenu={onToggle} />
+          </Collapse>
+        )}
       </Box>
       <Box h="7vh"></Box>
     </>
   );
 }
+
+const DesktopLogo = ({}) => {
+  return (
+    <LinkBox>
+      <Flex alignItems="center">
+        <Image
+          priority
+          alt="logo"
+          src="/1024x1024.png"
+          width={30}
+          height={30}
+        />
+        <LinkOverlay href="/" as={Link}>
+          <Heading size="md" as="span" ml={3}>
+            Daochan
+          </Heading>
+        </LinkOverlay>
+      </Flex>
+    </LinkBox>
+  );
+};
+
+const MobileLogo = ({
+  isOpen,
+  onToggle,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+}) => {
+  return (
+    <Flex alignItems="center" as="button" onClick={onToggle}>
+      <Image priority alt="logo" src="/1024x1024.png" width={30} height={30} />
+      <Heading size="md" as="span" ml={3} mr={2}>
+        Daochan
+      </Heading>
+      {isOpen ? <ChevronUpIcon mt={1} /> : <ChevronDownIcon mt={1} />}
+    </Flex>
+  );
+};
 
 const DesktopNav = ({ navItems }: { navItems: NavItem[] }) => {
   return (
@@ -179,13 +157,12 @@ const DesktopNav = ({ navItems }: { navItems: NavItem[] }) => {
                 color={"gray.200"}
                 _hover={{
                   textDecoration: "none",
-                  color: "brand.400",
+                  color: "brand.200",
                 }}
               >
                 {navItem.label}
               </Link>
             </PopoverTrigger>
-
             {navItem.children && (
               <PopoverContent
                 border={0}

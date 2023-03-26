@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { menuTheme } from "./menu";
 
 const config = {
   initialColorMode: "dark",
@@ -36,6 +37,12 @@ const config = {
         fontWeight: "500",
       },
     },
+    Heading: {
+      baseStyle: {
+        color: "whiteAlpha.900",
+      },
+    },
+    Menu: menuTheme,
     Button: {
       variants: {
         solid: {
