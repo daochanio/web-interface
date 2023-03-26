@@ -31,6 +31,7 @@ interface NavItem {
   children?: Array<NavItem>;
   href: string;
   isExternal?: boolean;
+  isMobileOnly?: boolean;
 }
 
 function Navbar() {
@@ -39,6 +40,11 @@ function Navbar() {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const NAV_ITEMS: Array<NavItem> = [
+    {
+      label: intl.formatMessage({ id: "home", defaultMessage: "Home" }),
+      href: Routes.HOME,
+      isMobileOnly: true,
+    },
     {
       label: intl.formatMessage({ id: "trending", defaultMessage: "Trending" }),
       href: Routes.TRENDING,
@@ -145,43 +151,45 @@ const MobileLogo = ({
 const DesktopNav = ({ navItems }: { navItems: NavItem[] }) => {
   return (
     <Stack direction={"row"} spacing={4} ml={10}>
-      {navItems.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover trigger={"hover"} placement={"bottom-start"}>
-            <PopoverTrigger>
-              <Link
-                p={2}
-                href={navItem.href}
-                fontSize={"md"}
-                fontWeight={500}
-                color={"gray.200"}
-                _hover={{
-                  textDecoration: "none",
-                  color: "brand.200",
-                }}
-              >
-                {navItem.label}
-              </Link>
-            </PopoverTrigger>
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={"xl"}
-                bg={"gray.800"}
-                p={4}
-                rounded={"xl"}
-                minW={"sm"}
-              >
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
+      {navItems
+        .filter((navItem) => !navItem.isMobileOnly)
+        .map((navItem) => (
+          <Box key={navItem.label}>
+            <Popover trigger={"hover"} placement={"bottom-start"}>
+              <PopoverTrigger>
+                <Link
+                  p={2}
+                  href={navItem.href}
+                  fontSize={"md"}
+                  fontWeight={500}
+                  color={"gray.200"}
+                  _hover={{
+                    textDecoration: "none",
+                    color: "brand.200",
+                  }}
+                >
+                  {navItem.label}
+                </Link>
+              </PopoverTrigger>
+              {navItem.children && (
+                <PopoverContent
+                  border={0}
+                  boxShadow={"xl"}
+                  bg={"gray.800"}
+                  p={4}
+                  rounded={"xl"}
+                  minW={"sm"}
+                >
+                  <Stack>
+                    {navItem.children.map((child) => (
+                      <DesktopSubNav key={child.label} {...child} />
+                    ))}
+                  </Stack>
+                </PopoverContent>
+              )}
+            </Popover>
+          </Box>
+        ))}
     </Stack>
   );
 };

@@ -6,7 +6,8 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const baseStyle = definePartsStyle({
   list: {
-    border: "1px solid gray.700",
+    border: "1px solid",
+    borderColor: "gray.700",
     bg: "gray.900",
   },
   item: {
