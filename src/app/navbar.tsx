@@ -51,7 +51,7 @@ function Navbar() {
     },
     {
       label: intl.formatMessage({ id: "more", defaultMessage: "More" }),
-      href: "#",
+      href: "",
       children: [
         {
           label: intl.formatMessage({ id: "about", defaultMessage: "About" }),
@@ -150,26 +150,42 @@ const MobileLogo = ({
 
 const DesktopNav = ({ navItems }: { navItems: NavItem[] }) => {
   return (
-    <Stack direction={"row"} spacing={4} ml={10}>
+    <Stack direction={"row"} spacing={4} ml={10} alignItems="center">
       {navItems
         .filter((navItem) => !navItem.isMobileOnly)
         .map((navItem) => (
           <Box key={navItem.label}>
             <Popover trigger={"hover"} placement={"bottom-start"}>
               <PopoverTrigger>
-                <Link
-                  p={2}
-                  href={navItem.href}
-                  fontSize={"md"}
-                  fontWeight={500}
-                  color={"gray.200"}
-                  _hover={{
-                    textDecoration: "none",
-                    color: "brand.200",
-                  }}
-                >
-                  {navItem.label}
-                </Link>
+                {!navItem.children ? (
+                  <Link
+                    p={2}
+                    href={navItem.href ?? ""}
+                    fontSize={"md"}
+                    fontWeight={500}
+                    color={"gray.200"}
+                    _hover={{
+                      textDecoration: "none",
+                      color: "brand.200",
+                    }}
+                  >
+                    {navItem.label}
+                  </Link>
+                ) : (
+                  <Text
+                    as="button"
+                    p={2}
+                    fontSize={"md"}
+                    fontWeight={500}
+                    color={"gray.200"}
+                    _hover={{
+                      textDecoration: "none",
+                      color: "brand.200",
+                    }}
+                  >
+                    {navItem.label}
+                  </Text>
+                )}
               </PopoverTrigger>
               {navItem.children && (
                 <PopoverContent
