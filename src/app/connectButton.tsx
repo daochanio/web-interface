@@ -77,7 +77,13 @@ function ProfileButton() {
 
   return (
     <Menu>
-      <MenuButton variant="ghost" as={Button} rightIcon={<ChevronDownIcon />}>
+      <MenuButton
+        as={Button}
+        bg="gray.800"
+        color="brand.200"
+        _hover={{ bg: "gray.900" }}
+        rightIcon={<ChevronDownIcon />}
+      >
         {shortAddress}
       </MenuButton>
       <MenuList>

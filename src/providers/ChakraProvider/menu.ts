@@ -5,17 +5,11 @@ const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys);
 
 const baseStyle = definePartsStyle({
-  button: {
-    _active: {
-      bg: "red",
-    },
-  },
   list: {
-    border: "none",
-    bg: "gray.800",
+    bg: "gray.900",
   },
   item: {
-    bg: "gray.800",
+    bg: "gray.900",
     _hover: {
       bg: "gray.700",
     },

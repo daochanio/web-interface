@@ -42,7 +42,6 @@ const config = {
         color: "whiteAlpha.900",
       },
     },
-    Menu: menuTheme,
     Button: {
       variants: {
         solid: {
@@ -67,6 +66,7 @@ const config = {
         size: "md",
       },
     },
+    Menu: menuTheme,
   },
 };
 
