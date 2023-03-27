@@ -143,7 +143,11 @@ const MobileLogo = ({
       <Heading size="md" as="span" ml={3} mr={2}>
         Daochan
       </Heading>
-      {isOpen ? <ChevronUpIcon mt={1} /> : <ChevronDownIcon mt={1} />}
+      {isOpen ? (
+        <ChevronUpIcon mt={1} color="whiteAlpha.900" />
+      ) : (
+        <ChevronDownIcon mt={1} color="whiteAlpha.900" />
+      )}
     </Flex>
   );
 };
@@ -314,12 +318,16 @@ const MobileNavItem = ({
         href={href}
         justify={"space-between"}
         align={"center"}
-        _hover={{
-          textDecoration: "none",
-          color: "brand.400",
-        }}
       >
-        <Text fontWeight={600}>{label}</Text>
+        <Text
+          _hover={{
+            textDecoration: "none",
+            color: "brand.200",
+          }}
+          fontWeight={600}
+        >
+          {label}
+        </Text>
         {children && (
           <Icon
             as={MdKeyboardArrowDown}
@@ -346,6 +354,7 @@ const MobileNavItem = ({
                 href,
                 py: 2,
                 onClick: onToggleMenu,
+                color: "whiteAlpha.900",
                 _hover: {
                   textDecoration: "none",
                   color: "brand.400",
