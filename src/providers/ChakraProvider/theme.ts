@@ -28,19 +28,15 @@ const config = {
     global: {
       body: {
         bg: "gray.900",
+        color: "whiteAlpha.900",
+        fontWeight: "500",
       },
     },
   },
   components: {
     Text: {
       baseStyle: {
-        color: "whiteAlpha.900",
         fontWeight: "500",
-      },
-    },
-    Heading: {
-      baseStyle: {
-        color: "whiteAlpha.900",
       },
     },
     Button: {
@@ -61,10 +57,6 @@ const config = {
             bg: "gray.900",
           },
         },
-      },
-      defaultProps: {
-        variant: "solid",
-        size: "md",
       },
     },
     Menu: menuTheme,
