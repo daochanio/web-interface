@@ -18,12 +18,15 @@ import {
   Link as ChakraLink,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
+import {
+  MdKeyboardArrowRight,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+} from "react-icons/md";
 import Image from "next/image";
 import ConnectButton from "./connectButton";
 import { Routes } from "../common/routes";
 import { Link } from "@chakra-ui/next-js";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 
 interface NavItem {
   label: string;
@@ -143,11 +146,12 @@ const MobileLogo = ({
       <Heading size="md" as="span" ml={3} mr={2}>
         Daochan
       </Heading>
-      {isOpen ? (
-        <ChevronUpIcon mt={1} color="whiteAlpha.900" />
-      ) : (
-        <ChevronDownIcon mt={1} color="whiteAlpha.900" />
-      )}
+      <Icon
+        as={MdKeyboardArrowDown}
+        mt={1}
+        transition={"all .25s ease-in-out"}
+        transform={isOpen ? "rotate(180deg)" : ""}
+      />
     </Flex>
   );
 };
@@ -333,8 +337,6 @@ const MobileNavItem = ({
             as={MdKeyboardArrowDown}
             transition={"all .25s ease-in-out"}
             transform={isOpen ? "rotate(180deg)" : ""}
-            w={6}
-            h={6}
           />
         )}
       </Flex>

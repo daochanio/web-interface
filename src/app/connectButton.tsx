@@ -1,10 +1,14 @@
 "use client";
 
 import { useHasMounted } from "@/src/hooks/useHasMounted";
-import { MdLanguage, MdOutlineCancel } from "react-icons/md";
+import {
+  MdKeyboardArrowDown,
+  MdLanguage,
+  MdOutlineCancel,
+} from "react-icons/md";
+import { TbPlugConnected } from "react-icons/tb";
 import {
   Button,
-  Divider,
   Flex,
   Icon,
   Menu,
@@ -19,13 +23,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 import {
   Connector,
@@ -36,7 +36,6 @@ import {
   useSwitchNetwork,
 } from "wagmi";
 import useDisplayAddress from "../hooks/useDisplayAddress";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 
 export default function ConnectButton() {
   const intl = useIntl();
@@ -78,92 +77,73 @@ function ProfileButton() {
 
   return (
     <Menu>
-      <MenuButton
-        as={Button}
-        bg="gray.800"
-        color="brand.200"
-        _hover={{ bg: "gray.900" }}
-        _active={{ bg: "gray.900" }}
-        rightIcon={<ChevronDownIcon />}
-      >
-        {shortAddress}
-      </MenuButton>
-      <MenuList>
-        {chain?.id !== intendedChainId && switchNetwork && (
-          <>
-            <MenuItem onClick={() => switchNetwork(intendedChainId)}>
+      {({ isOpen }) => (
+        <>
+          <MenuButton
+            as={Button}
+            bg="gray.800"
+            color="brand.200"
+            _hover={{ bg: "gray.900" }}
+            _active={{ bg: "gray.900" }}
+            rightIcon={
+              <Icon
+                as={MdKeyboardArrowDown}
+                color="brand.200"
+                transition={"all .25s ease-in-out"}
+                transform={isOpen ? "rotate(180deg)" : ""}
+              />
+            }
+          >
+            {shortAddress}
+          </MenuButton>
+          <MenuList>
+            {chain?.id !== intendedChainId && switchNetwork && (
+              <>
+                <MenuItem onClick={() => switchNetwork(intendedChainId)}>
+                  <Flex alignItems="center">
+                    <Icon as={MdLanguage} w={5} h={5} color="brand.200" />
+                  </Flex>
+                  <Text ml={3} color="brand.200">
+                    {intl.formatMessage(
+                      {
+                        id: "switch-network",
+                        defaultMessage: "Switch to {chain}",
+                      },
+                      { chain: "Arbitrum" }
+                    )}
+                  </Text>
+                </MenuItem>
+                <MenuDivider />
+              </>
+            )}
+            <MenuItem onClick={() => disconnect()}>
               <Flex alignItems="center">
-                <Icon as={MdLanguage} w={5} h={5} color="brand.200" />
+                <Icon color="red.500" as={MdOutlineCancel} w={5} h={5} />
               </Flex>
-              <Text ml={3} color="brand.200">
-                {intl.formatMessage(
-                  { id: "switch-network", defaultMessage: "Switch to {chain}" },
-                  { chain: "Arbitrum" }
-                )}
+              <Text color="red.500" ml={3}>
+                {intl.formatMessage({
+                  id: "disconnect-wallet",
+                  defaultMessage: "Disconnect Wallet",
+                })}
               </Text>
             </MenuItem>
-            <MenuDivider />
-          </>
-        )}
-        <MenuItem onClick={() => disconnect()}>
-          <Flex alignItems="center">
-            <Icon color="red.500" as={MdOutlineCancel} w={5} h={5} />
-          </Flex>
-          <Text color="red.500" ml={3}>
-            {intl.formatMessage({
-              id: "disconnect-wallet",
-              defaultMessage: "Disconnect Wallet",
-            })}
-          </Text>
-        </MenuItem>
-      </MenuList>
+          </MenuList>
+        </>
+      )}
     </Menu>
   );
 }
 
 function WalletConnectButton() {
-  const toast = useToast();
   const intl = useIntl();
-  const { isConnected } = useAccount();
-  const { error } = useConnect();
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (isOpen && isConnected) {
-      toast({
-        title: intl.formatMessage({
-          id: "connected-to-wallet",
-          defaultMessage: "Connected to wallet",
-        }),
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-
-    if (isConnected) {
-      setIsOpen(false);
-    }
-  }, [isConnected, isOpen, toast, intl]);
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: intl.formatMessage({
-          id: "error-connect-to-wallet",
-          defaultMessage: "Error connecting to wallet",
-        }),
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }, [error, toast, intl]);
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>
+      <Button
+        onClick={() => setIsOpen(true)}
+        rightIcon={<Icon as={TbPlugConnected} w={4} h={4} color="gray.900" />}
+      >
         {intl.formatMessage({
           id: "connect",
           defaultMessage: "Connect",

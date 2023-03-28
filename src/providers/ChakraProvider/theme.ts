@@ -39,12 +39,17 @@ const config = {
         fontWeight: "500",
       },
     },
+    Icon: {
+      defaultProps: {
+        color: "whiteAlpha.900",
+      },
+    },
     Button: {
       variants: {
         solid: {
           bg: "brand.200",
           fontWeight: "700",
-          color: "whiteAlpha.900",
+          color: "gray.700",
           _hover: {
             bg: "brand.400",
           },
