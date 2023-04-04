@@ -3,5 +3,5 @@ export default function Trending() {
     <div>
       <h1>Trending</h1>
     </div>
-  );
+  )
 }

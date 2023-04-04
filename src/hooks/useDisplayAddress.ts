@@ -3,14 +3,14 @@
  */
 export default function useDisplayAddress(str: string | undefined) {
   if (!str) {
-    return "";
+    return ''
   }
 
-  const substr = str.includes("0x") ? str.split("0x")[1] : str;
+  const substr = str.includes('0x') ? str.split('0x')[1] : str
 
   if (substr.length < 6) {
-    return substr;
+    return substr
   }
 
-  return substr.substring(0, 6);
+  return substr.substring(0, 6)
 }
