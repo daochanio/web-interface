@@ -6,9 +6,6 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 
-console.log(import.meta.env.DEV)
-console.log(import.meta.env.VITE_ALCHEMY_API_KEY)
-console.log(import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID)
 const { chains, provider } = configureChains(
 	[import.meta.env.DEV ? arbitrumGoerli : arbitrum],
 	[alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_API_KEY ?? '' })]

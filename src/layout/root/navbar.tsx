@@ -100,7 +100,7 @@ const DesktopLogo = () => {
 	return (
 		<LinkBox>
 			<Flex alignItems="center">
-				<Img alt="logo" src="/1024x1024.png" width={30} height={30} />
+				<Img alt="logo" src="/32x32.png" width={30} height={30} />
 				<LinkOverlay to="/" as={RouterLink}>
 					<Heading size="md" as="span" ml={3}>
 						Daochan
@@ -114,7 +114,7 @@ const DesktopLogo = () => {
 const MobileLogo = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) => {
 	return (
 		<Flex alignItems="center" as="button" onClick={onToggle}>
-			<Img alt="logo" src="/1024x1024.png" width={30} height={30} />
+			<Img alt="logo" src="/32x32.png" width={30} height={30} />
 			<Heading size="md" as="span" ml={3} mr={2}>
 				Daochan
 			</Heading>
