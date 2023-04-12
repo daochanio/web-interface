@@ -86,8 +86,8 @@ export async function signMessage({
 	noCache?: boolean
 }): Promise<{ signature: string; address: string }> {
 	const address = await signer.getAddress()
-	const storageSignature = window.localStorage.getItem(`etheralley_signature_${address}`)
-	const storageSignatureExpirey = window.localStorage.getItem(`etheralley_signature_expirey_${address}`)
+	const storageSignature = window.localStorage.getItem(`daochan_signature_${address}`)
+	const storageSignatureExpirey = window.localStorage.getItem(`daochan_signature_expirey_${address}`)
 
 	if (
 		!noCache &&
@@ -111,8 +111,8 @@ export async function signMessage({
 
 	const signature = await signer.signMessage(message)
 
-	window.localStorage.setItem(`etheralley_signature_${address}`, signature)
-	window.localStorage.setItem(`etheralley_signature_expirey_${address}`, expires.toString())
+	window.localStorage.setItem(`daochan_signature_${address}`, signature)
+	window.localStorage.setItem(`daochan_signature_expirey_${address}`, expires.toString())
 
 	return { signature, address }
 }
