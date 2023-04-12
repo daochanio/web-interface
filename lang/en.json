@@ -1,8 +1,44 @@
 {
-  "go": {
-    "defaultMessage": "GO"
+  "about": {
+    "defaultMessage": "About"
   },
-  "hello-world": {
-    "defaultMessage": "Hello World!"
+  "close-wallet-connect-modal": {
+    "defaultMessage": "Close"
+  },
+  "connect": {
+    "defaultMessage": "Connect"
+  },
+  "connect-a-wallet": {
+    "defaultMessage": "Connect to a Wallet"
+  },
+  "create-thread": {
+    "defaultMessage": "Create Thread"
+  },
+  "disconnect-wallet": {
+    "defaultMessage": "Disconnect Wallet"
+  },
+  "github": {
+    "defaultMessage": "GitHub"
+  },
+  "home": {
+    "defaultMessage": "Home"
+  },
+  "learn-more": {
+    "defaultMessage": "Learn more about {name}"
+  },
+  "more": {
+    "defaultMessage": "More"
+  },
+  "sign-in": {
+    "defaultMessage": "Sign in"
+  },
+  "switch-network": {
+    "defaultMessage": "Switch to {chain}"
+  },
+  "trending": {
+    "defaultMessage": "Trending"
+  },
+  "view-sourcecode": {
+    "defaultMessage": "View the source code on {name}"
   }
 }

@@ -1,14 +1,98 @@
 {
-  "go": [
+  "about": [
     {
       "type": 0,
-      "value": "GO"
+      "value": "About"
     }
   ],
-  "hello-world": [
+  "close-wallet-connect-modal": [
     {
       "type": 0,
-      "value": "Hello World!"
+      "value": "Close"
+    }
+  ],
+  "connect": [
+    {
+      "type": 0,
+      "value": "Connect"
+    }
+  ],
+  "connect-a-wallet": [
+    {
+      "type": 0,
+      "value": "Connect to a Wallet"
+    }
+  ],
+  "create-thread": [
+    {
+      "type": 0,
+      "value": "Create Thread"
+    }
+  ],
+  "disconnect-wallet": [
+    {
+      "type": 0,
+      "value": "Disconnect Wallet"
+    }
+  ],
+  "github": [
+    {
+      "type": 0,
+      "value": "GitHub"
+    }
+  ],
+  "home": [
+    {
+      "type": 0,
+      "value": "Home"
+    }
+  ],
+  "learn-more": [
+    {
+      "type": 0,
+      "value": "Learn more about "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "more": [
+    {
+      "type": 0,
+      "value": "More"
+    }
+  ],
+  "sign-in": [
+    {
+      "type": 0,
+      "value": "Sign in"
+    }
+  ],
+  "switch-network": [
+    {
+      "type": 0,
+      "value": "Switch to "
+    },
+    {
+      "type": 1,
+      "value": "chain"
+    }
+  ],
+  "trending": [
+    {
+      "type": 0,
+      "value": "Trending"
+    }
+  ],
+  "view-sourcecode": [
+    {
+      "type": 0,
+      "value": "View the source code on "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ]
 }

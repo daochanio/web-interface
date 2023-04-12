@@ -1,40 +1,77 @@
 {
-  "name": "web-interface",
-  "version": "0.1.0",
+  "name": "web-interface-vite",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "prettier --check src '!**/*.json' && eslint",
+    "lint:fix": "prettier --write src '!**/*.json'",
+    "analyze": "source-map-explorer 'dist/assets/*.js' --html analyze/result.html",
     "extract": "formatjs extract 'src/**/*.ts*' --ignore='**/*.d.ts' --out-file lang/en.json",
     "compile-folder": "formatjs compile-folder --ast lang src/providers/IntlProvider/lang",
     "compile-pseudos": "formatjs compile lang/en.json --out-file src/providers/IntlProvider/lang/ro.json --ast --pseudo-locale xx-LS && formatjs compile lang/en.json --out-file src/providers/IntlProvider/lang/hr.json --ast --pseudo-locale en-XA",
     "intl": "npm run extract && npm run compile-folder && npm run compile-pseudos"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.17",
-    "@chakra-ui/next-js": "^2.1.0",
-    "@chakra-ui/react": "^2.5.3",
+    "@chakra-ui/icons": "^2.0.18",
+    "@chakra-ui/react": "^2.5.5",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@tanstack/react-query": "^4.28.0",
-    "framer-motion": "^10.9.1",
-    "next": "13.2.4",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "@tanstack/react-query": "^4.29.1",
+    "framer-motion": "^10.11.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-intl": "^6.3.2",
-    "sharp": "^0.32.0",
-    "wagmi": "^0.12.6"
+    "react-router-dom": "^6.10.0",
+    "wagmi": "^0.12.10"
   },
   "devDependencies": {
     "@formatjs/cli": "^6.0.4",
-    "@types/node": "^18.15.9",
-    "@types/react": "^18.0.29",
+    "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
-    "eslint": "^8.36.0",
-    "eslint-config-next": "^13.2.4",
-    "typescript": "^4.9.5"
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.7",
+    "source-map-explorer": "^2.5.3",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0"
+  },
+  "prettier": {
+    "useTabs": true,
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended"
+    ],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "rules": {
+      "react/react-in-jsx-scope": "off",
+      "react/display-name": "off",
+      "react/prop-types": "off"
+    }
   }
 }

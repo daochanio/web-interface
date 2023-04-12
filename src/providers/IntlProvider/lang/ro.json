@@ -1,14 +1,110 @@
 {
-  "go": [
+  "about": [
     {
       "type": 0,
-      "value": "GOSSSSSSSSSSSSSSSSSSSSSSSSS"
+      "value": "AboutSSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
-  "hello-world": [
+  "close-wallet-connect-modal": [
     {
       "type": 0,
-      "value": "Hello World!SSSSSSSSSSSSSSSSSSSSSSSSS"
+      "value": "CloseSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "connect": [
+    {
+      "type": 0,
+      "value": "ConnectSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "connect-a-wallet": [
+    {
+      "type": 0,
+      "value": "Connect to a WalletSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "create-thread": [
+    {
+      "type": 0,
+      "value": "Create ThreadSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "disconnect-wallet": [
+    {
+      "type": 0,
+      "value": "Disconnect WalletSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "github": [
+    {
+      "type": 0,
+      "value": "GitHubSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "home": [
+    {
+      "type": 0,
+      "value": "HomeSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "learn-more": [
+    {
+      "type": 0,
+      "value": "Learn more about "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "SSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "more": [
+    {
+      "type": 0,
+      "value": "MoreSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "sign-in": [
+    {
+      "type": 0,
+      "value": "Sign inSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "switch-network": [
+    {
+      "type": 0,
+      "value": "Switch to "
+    },
+    {
+      "type": 1,
+      "value": "chain"
+    },
+    {
+      "type": 0,
+      "value": "SSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "trending": [
+    {
+      "type": 0,
+      "value": "TrendingSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "view-sourcecode": [
+    {
+      "type": 0,
+      "value": "View the source code on "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "SSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ]
 }
