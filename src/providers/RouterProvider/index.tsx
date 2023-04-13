@@ -1,31 +1,63 @@
+import { ReactNode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Box, Container } from '@chakra-ui/react'
 import { Routes } from '../../common/routes'
-import About from '../../layout/about'
-import Home from '../../layout/home'
-import Trending from '../../layout/trending'
 import Root from '../../layout/root'
+import Home from '../../layout/home'
+import ErrorBoundary from './ErrorBoundary'
+import About from '../../layout/about'
+import Trending from '../../layout/trending'
 import Thread from '../../layout/thread'
+import NotFound from '../../layout/NotFound'
 
 const router = createBrowserRouter([
 	{
 		path: Routes.HOME,
-		element: <Root />,
+		element: (
+			<ErrorBoundary>
+				<Root />
+			</ErrorBoundary>
+		),
 		children: [
 			{
 				path: Routes.HOME,
-				element: <Home />,
+				element: (
+					<LayoutWrapper>
+						<Home />
+					</LayoutWrapper>
+				),
 			},
 			{
 				path: Routes.ABOUT,
-				element: <About />,
+				element: (
+					<LayoutWrapper>
+						<About />
+					</LayoutWrapper>
+				),
 			},
 			{
 				path: Routes.TRENDING,
-				element: <Trending />,
+				element: (
+					<LayoutWrapper>
+						<Trending />
+					</LayoutWrapper>
+				),
 			},
 			{
 				path: Routes.THREAD,
-				element: <Thread />,
+				element: (
+					<LayoutWrapper>
+						<Thread />
+					</LayoutWrapper>
+				),
+			},
+			{
+				path: '*',
+				element: (
+					<LayoutWrapper>
+						<NotFound />
+					</LayoutWrapper>
+				),
 			},
 		],
 	},
@@ -33,4 +65,13 @@ const router = createBrowserRouter([
 
 export default function RouterProviderWrapper() {
 	return <RouterProvider router={router} />
+}
+
+function LayoutWrapper({ children }: { children: ReactNode }) {
+	return (
+		<Container maxW="container.lg">
+			<Box mt="15vh" />
+			<ErrorBoundary>{children}</ErrorBoundary>
+		</Container>
+	)
 }

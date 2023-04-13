@@ -23,6 +23,18 @@
       "value": "Connect to a Wallet"
     }
   ],
+  "connect-wallet-tooltip": [
+    {
+      "type": 0,
+      "value": "Connect to your wallet"
+    }
+  ],
+  "content": [
+    {
+      "type": 0,
+      "value": "content"
+    }
+  ],
   "create-thread": [
     {
       "type": 0,
@@ -33,6 +45,30 @@
     {
       "type": 0,
       "value": "Disconnect Wallet"
+    }
+  ],
+  "error-creating-thread": [
+    {
+      "type": 0,
+      "value": "Error Creating Thread"
+    }
+  ],
+  "error-loading-page": [
+    {
+      "type": 0,
+      "value": "There was an error loading the page"
+    }
+  ],
+  "error-logging-in": [
+    {
+      "type": 0,
+      "value": "Error logging in"
+    }
+  ],
+  "error-switching-network": [
+    {
+      "type": 0,
+      "value": "Error switching network"
     }
   ],
   "github": [
@@ -63,10 +99,40 @@
       "value": "More"
     }
   ],
+  "next": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
+  "non-existent-page": [
+    {
+      "type": 0,
+      "value": "The page you're looking for does not seem to exist"
+    }
+  ],
+  "page-not-found": [
+    {
+      "type": 0,
+      "value": "Page Not Found"
+    }
+  ],
   "sign-in": [
     {
       "type": 0,
       "value": "Sign in"
+    }
+  ],
+  "success-logging-in": [
+    {
+      "type": 0,
+      "value": "Successfully logged in!"
+    }
+  ],
+  "success-switching-network": [
+    {
+      "type": 0,
+      "value": "Successfully switched network!"
     }
   ],
   "switch-network": [
@@ -83,6 +149,12 @@
     {
       "type": 0,
       "value": "Trending"
+    }
+  ],
+  "unexpected-error": [
+    {
+      "type": 0,
+      "value": "Unexpected Error"
     }
   ],
   "view-sourcecode": [

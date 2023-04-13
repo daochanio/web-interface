@@ -55,6 +55,34 @@
       "value": "]"
     }
   ],
+  "connect-wallet-tooltip": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƞḗḗƈŧ ŧǿǿ ẏǿǿŭŭř ẇȧȧŀŀḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "content": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ƈǿǿƞŧḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "create-thread": [
     {
       "type": 0,
@@ -77,6 +105,62 @@
     {
       "type": 0,
       "value": "Ḓīşƈǿǿƞƞḗḗƈŧ Ẇȧȧŀŀḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "error-creating-thread": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗřřǿǿř Ƈřḗḗȧȧŧīƞɠ Ŧħřḗḗȧȧḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "error-loading-page": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗřḗḗ ẇȧȧş ȧȧƞ ḗḗřřǿǿř ŀǿǿȧȧḓīƞɠ ŧħḗḗ ƥȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "error-logging-in": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗřřǿǿř ŀǿǿɠɠīƞɠ īƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "error-switching-network": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗřřǿǿř şẇīŧƈħīƞɠ ƞḗḗŧẇǿǿřķ"
     },
     {
       "type": 0,
@@ -143,6 +227,48 @@
       "value": "]"
     }
   ],
+  "next": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "non-existent-page": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƥȧȧɠḗḗ ẏǿǿŭŭ'řḗḗ ŀǿǿǿǿķīƞɠ ƒǿǿř ḓǿǿḗḗş ƞǿǿŧ şḗḗḗḗḿ ŧǿǿ ḗḗẋīşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "page-not-found": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧɠḗḗ Ƞǿǿŧ Ƒǿǿŭŭƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "sign-in": [
     {
       "type": 0,
@@ -151,6 +277,34 @@
     {
       "type": 0,
       "value": "Şīɠƞ īƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "success-logging-in": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƈƈḗḗşşƒŭŭŀŀẏ ŀǿǿɠɠḗḗḓ īƞ!"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "success-switching-network": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƈƈḗḗşşƒŭŭŀŀẏ şẇīŧƈħḗḗḓ ƞḗḗŧẇǿǿřķ!"
     },
     {
       "type": 0,
@@ -183,6 +337,20 @@
     {
       "type": 0,
       "value": "Ŧřḗḗƞḓīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "unexpected-error": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞḗḗẋƥḗḗƈŧḗḗḓ Ḗřřǿǿř"
     },
     {
       "type": 0,

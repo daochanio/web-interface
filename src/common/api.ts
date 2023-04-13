@@ -14,13 +14,9 @@ export type CreateThreadResponse = {
 	id: string
 }
 
-export async function getThreads(offset: number, limit: number) {
+export async function getThreads() {
 	return api<Thread[]>('/threads', {
 		method: 'GET',
-		queryParams: [
-			{ key: 'offset', value: offset },
-			{ key: 'limit', value: limit },
-		],
 	})
 }
 

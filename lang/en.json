@@ -11,11 +11,29 @@
   "connect-a-wallet": {
     "defaultMessage": "Connect to a Wallet"
   },
+  "connect-wallet-tooltip": {
+    "defaultMessage": "Connect to your wallet"
+  },
+  "content": {
+    "defaultMessage": "content"
+  },
   "create-thread": {
     "defaultMessage": "Create Thread"
   },
   "disconnect-wallet": {
     "defaultMessage": "Disconnect Wallet"
+  },
+  "error-creating-thread": {
+    "defaultMessage": "Error Creating Thread"
+  },
+  "error-loading-page": {
+    "defaultMessage": "There was an error loading the page"
+  },
+  "error-logging-in": {
+    "defaultMessage": "Error logging in"
+  },
+  "error-switching-network": {
+    "defaultMessage": "Error switching network"
   },
   "github": {
     "defaultMessage": "GitHub"
@@ -29,14 +47,32 @@
   "more": {
     "defaultMessage": "More"
   },
+  "next": {
+    "defaultMessage": "Next"
+  },
+  "non-existent-page": {
+    "defaultMessage": "The page you're looking for does not seem to exist"
+  },
+  "page-not-found": {
+    "defaultMessage": "Page Not Found"
+  },
   "sign-in": {
     "defaultMessage": "Sign in"
+  },
+  "success-logging-in": {
+    "defaultMessage": "Successfully logged in!"
+  },
+  "success-switching-network": {
+    "defaultMessage": "Successfully switched network!"
   },
   "switch-network": {
     "defaultMessage": "Switch to {chain}"
   },
   "trending": {
     "defaultMessage": "Trending"
+  },
+  "unexpected-error": {
+    "defaultMessage": "Unexpected Error"
   },
   "view-sourcecode": {
     "defaultMessage": "View the source code on {name}"

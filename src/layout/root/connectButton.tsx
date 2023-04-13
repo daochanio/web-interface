@@ -17,6 +17,7 @@ import {
 	ModalHeader,
 	ModalOverlay,
 	Text,
+	useToast,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -73,9 +74,27 @@ function ProfileButton() {
 
 function SignMessageMenuItem() {
 	const intl = useIntl()
+	const toast = useToast()
 	const { data: signer } = useSigner()
 	const { mutate } = useMutation({
 		mutationFn: signMessage,
+		onSuccess: () => {
+			toast({
+				title: intl.formatMessage({ id: 'success-logging-in', defaultMessage: 'Successfully logged in!' }),
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			})
+		},
+		onError: (error) => {
+			toast({
+				title: intl.formatMessage({ id: 'error-logging-in', defaultMessage: 'Error logging in' }),
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+			console.error(error)
+		},
 	})
 
 	if (!signer) {
@@ -99,15 +118,41 @@ function SignMessageMenuItem() {
 
 function SwitchNetworkMenuItem() {
 	const intl = useIntl()
-	const { switchNetwork } = useSwitchNetwork()
+	const { switchNetworkAsync } = useSwitchNetwork()
+	const toast = useToast()
 	const { chain } = useNetwork()
 	const intendedChainId = Number.parseInt(import.meta.env.VITE_CHAIN_ID ?? '')
-	if (chain?.id === intendedChainId || !switchNetwork) {
+	const { mutate } = useMutation({
+		mutationFn: switchNetworkAsync,
+		onSuccess: () => {
+			toast({
+				title: intl.formatMessage({
+					id: 'success-switching-network',
+					defaultMessage: 'Successfully switched network!',
+				}),
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			})
+		},
+		onError: (error) => {
+			toast({
+				title: intl.formatMessage({ id: 'error-switching-network', defaultMessage: 'Error switching network' }),
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+			console.error(error)
+		},
+	})
+
+	if (chain?.id === intendedChainId || !switchNetworkAsync) {
 		return null
 	}
+
 	return (
 		<>
-			<MenuItem onClick={() => switchNetwork(intendedChainId)}>
+			<MenuItem onClick={() => mutate(intendedChainId)}>
 				<Flex alignItems="center">
 					<Icon as={MdLanguage} w={5} h={5} color="brand.200" />
 				</Flex>
@@ -181,7 +226,7 @@ function WalletConnectModal({ isOpen, close }: { isOpen: boolean; close: () => v
 				<ModalBody>
 					<Flex direction="column">
 						{connectors.map((connector) => (
-							<ConnectorButton key={connector.id} connector={connector} />
+							<ConnectorButton key={connector.id} connector={connector} onConnect={close} />
 						))}
 					</Flex>
 				</ModalBody>
@@ -199,7 +244,7 @@ function WalletConnectModal({ isOpen, close }: { isOpen: boolean; close: () => v
 	)
 }
 
-function ConnectorButton({ connector }: { connector: Connector }) {
+function ConnectorButton({ connector, onConnect }: { connector: Connector; onConnect: () => void }) {
 	const { connect, isLoading, pendingConnector } = useConnect()
 
 	return (
@@ -208,7 +253,10 @@ function ConnectorButton({ connector }: { connector: Connector }) {
 			my={3}
 			isDisabled={!connector.ready || (isLoading && connector.id !== pendingConnector?.id)}
 			isLoading={isLoading && connector.id === pendingConnector?.id}
-			onClick={() => connect({ connector })}
+			onClick={() => {
+				connect({ connector })
+				onConnect()
+			}}
 		>
 			{connector.name}
 		</Button>

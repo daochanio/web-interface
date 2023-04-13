@@ -23,6 +23,18 @@
       "value": "Connect to a WalletSSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
+  "connect-wallet-tooltip": [
+    {
+      "type": 0,
+      "value": "Connect to your walletSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "content": [
+    {
+      "type": 0,
+      "value": "contentSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
   "create-thread": [
     {
       "type": 0,
@@ -33,6 +45,30 @@
     {
       "type": 0,
       "value": "Disconnect WalletSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "error-creating-thread": [
+    {
+      "type": 0,
+      "value": "Error Creating ThreadSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "error-loading-page": [
+    {
+      "type": 0,
+      "value": "There was an error loading the pageSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "error-logging-in": [
+    {
+      "type": 0,
+      "value": "Error logging inSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "error-switching-network": [
+    {
+      "type": 0,
+      "value": "Error switching networkSSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
   "github": [
@@ -67,10 +103,40 @@
       "value": "MoreSSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
+  "next": [
+    {
+      "type": 0,
+      "value": "NextSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "non-existent-page": [
+    {
+      "type": 0,
+      "value": "The page you're looking for does not seem to existSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "page-not-found": [
+    {
+      "type": 0,
+      "value": "Page Not FoundSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
   "sign-in": [
     {
       "type": 0,
       "value": "Sign inSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "success-logging-in": [
+    {
+      "type": 0,
+      "value": "Successfully logged in!SSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "success-switching-network": [
+    {
+      "type": 0,
+      "value": "Successfully switched network!SSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
   "switch-network": [
@@ -91,6 +157,12 @@
     {
       "type": 0,
       "value": "TrendingSSSSSSSSSSSSSSSSSSSSSSSSS"
+    }
+  ],
+  "unexpected-error": [
+    {
+      "type": 0,
+      "value": "Unexpected ErrorSSSSSSSSSSSSSSSSSSSSSSSSS"
     }
   ],
   "view-sourcecode": [
