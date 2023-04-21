@@ -3,15 +3,29 @@ import { Signer, FetchSignerResult } from '@wagmi/core'
 export type Thread = {
 	id: string
 	address: string
+	title: string
 	content: string
+	image: Image
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
 	votes: number
 }
 
+export type Image = {
+	fileName: string
+	url: string
+	contentType: string
+}
+
 export type CreateThreadResponse = {
 	id: string
+}
+
+export type UploadImageResponse = {
+	fileName: string
+	url: string
+	contentType: string
 }
 
 export async function getThreads() {
@@ -20,14 +34,33 @@ export async function getThreads() {
 	})
 }
 
+export async function uploadImage({ image, signer }: { image: File; signer?: FetchSignerResult<Signer> }) {
+	const formData = new FormData()
+	formData.append('image', image)
+
+	return api<UploadImageResponse>('/images', {
+		method: 'POST',
+		body: formData,
+		signer,
+	})
+}
+
 export async function createThread({
+	title,
 	content,
 	signer,
+	imageFileName,
 }: {
+	title: string
 	content: string
+	imageFileName: string
 	signer?: FetchSignerResult<Signer>
-}): Promise<CreateThreadResponse> {
-	return api<CreateThreadResponse>('/threads', { method: 'POST', body: { content }, signer })
+}) {
+	return api<CreateThreadResponse>('/threads', {
+		method: 'POST',
+		body: JSON.stringify({ title, content, imageFileName }),
+		signer,
+	})
 }
 
 type QueryParam = { key: string; value: string | number }
@@ -39,13 +72,13 @@ async function api<T>(
 		body,
 		queryParams,
 		signer,
-	}: { method: string; body?: unknown; queryParams?: QueryParam[]; signer?: FetchSignerResult<Signer> }
+	}: { method: string; body?: BodyInit; queryParams?: QueryParam[]; signer?: FetchSignerResult<Signer> }
 ): Promise<T> {
 	const options: RequestInit = {
 		method,
 	}
 	if (body) {
-		options.body = JSON.stringify(body)
+		options.body = body
 	}
 	if (signer) {
 		const { signature, address } = await signMessage({ signer })
