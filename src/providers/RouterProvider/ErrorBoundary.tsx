@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Error from '../../layout/Error'
+import Error from '../../layout/error'
 
 type Props = { children: React.ReactNode }
 

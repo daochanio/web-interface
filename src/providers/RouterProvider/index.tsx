@@ -8,7 +8,7 @@ import ErrorBoundary from './ErrorBoundary'
 import About from '../../layout/about'
 import Trending from '../../layout/trending'
 import Thread from '../../layout/thread'
-import NotFound from '../../layout/NotFound'
+import NotFound from '../../layout/notFound'
 
 const router = createBrowserRouter([
 	{
