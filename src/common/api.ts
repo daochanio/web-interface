@@ -179,7 +179,9 @@ export async function signMessage({
 		throw new Error(`Failed to get challenge ${response.status}`)
 	}
 
-	const { message, expires } = await response.json()
+	const {
+		data: { message, expires },
+	} = await response.json()
 
 	const signature = await signer.signMessage(message)
 

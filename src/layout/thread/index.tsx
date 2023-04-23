@@ -36,12 +36,13 @@ export default function ThreadPage() {
 }
 
 function ThreadHeader({ thread }: { thread: Thread }) {
-	const { image, id } = thread
+	const { image, content, title } = thread
 
 	return (
 		<>
-			<h1>Thread {id}</h1>
+			<h1>{title}</h1>
 			{image && <Image src={image.url} maxWidth={250} maxHeight={250} />}
+			<p>{content}</p>
 		</>
 	)
 }

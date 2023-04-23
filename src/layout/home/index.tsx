@@ -34,10 +34,10 @@ export default function Home() {
 						{group.data.map((thread) => (
 							<ListItem key={thread.id}>
 								<LinkBox>
-									{thread.image && <Image src={thread.image.url} maxWidth={250} maxHeight={250} />}
 									<LinkOverlay as={RouterLink} to={`/threads/${thread.id}`}>
 										{thread.title}
 									</LinkOverlay>
+									{thread.image && <Image src={thread.image.url} maxWidth={250} maxHeight={250} />}
 									<Text as="p">{thread.content}</Text>
 								</LinkBox>
 							</ListItem>
