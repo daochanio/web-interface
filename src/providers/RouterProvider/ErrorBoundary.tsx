@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Error from '../../layout/error'
+import Unexpected from '../../layout/unexpected'
 
 type Props = { children: React.ReactNode }
 
@@ -25,7 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
 			return children
 		}
 
-		return <Error />
+		return <Unexpected />
 	}
 }
 

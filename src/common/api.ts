@@ -5,7 +5,8 @@ export type Thread = {
 	address: string
 	title: string
 	content: string
-	image: Image
+	image?: Image
+	comments?: Comment[]
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
@@ -18,6 +19,19 @@ export type Image = {
 	contentType: string
 }
 
+export type Comment = {
+	id: string
+	address: string
+	threadId: string
+	content: string
+	image?: Image
+	repliedToComment?: Comment
+	isDeleted: boolean
+	createdAt: string
+	updatedAt: string
+	votes: number
+}
+
 export type CreateThreadResponse = {
 	id: string
 }
@@ -28,8 +42,37 @@ export type UploadImageResponse = {
 	contentType: string
 }
 
-export async function getThreads() {
-	return api<Thread[]>('/threads', {
+export type APIResponse<T> = {
+	data: T
+	nextPage?: {
+		offset: number
+		limit: number
+		count: number
+	}
+}
+
+export async function getThreadById({ id, offset, limit }: { id: string; offset: number; limit: number }) {
+	return api<Thread>(`/threads/${id}?offset=${offset}&limit=${limit}`, {
+		method: 'GET',
+	})
+}
+
+export async function getCommentsByThreadId({
+	threadId,
+	offset,
+	limit,
+}: {
+	threadId: string
+	offset: number
+	limit: number
+}) {
+	return api<Comment[]>(`/threads/${threadId}/comments?offset=${offset}&limit=${limit}`, {
+		method: 'GET',
+	})
+}
+
+export async function getThreads({ limit }: { limit: number }) {
+	return api<Thread[]>(`/threads?limit=${limit}`, {
 		method: 'GET',
 	})
 }
@@ -73,7 +116,7 @@ async function api<T>(
 		queryParams,
 		signer,
 	}: { method: string; body?: BodyInit; queryParams?: QueryParam[]; signer?: FetchSignerResult<Signer> }
-): Promise<T> {
+): Promise<APIResponse<T>> {
 	const options: RequestInit = {
 		method,
 	}
@@ -104,7 +147,7 @@ async function api<T>(
 		return JSON.parse(textBody)
 	}
 
-	return {} as T
+	return {} as APIResponse<T>
 }
 
 export async function signMessage({
@@ -136,7 +179,9 @@ export async function signMessage({
 		throw new Error(`Failed to get challenge ${response.status}`)
 	}
 
-	const { message, expires } = await response.json()
+	const {
+		data: { message, expires },
+	} = await response.json()
 
 	const signature = await signer.signMessage(message)
 

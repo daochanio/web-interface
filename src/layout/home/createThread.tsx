@@ -66,7 +66,7 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 
 	const { mutate: uploadImageMutation, isLoading: uploadLoading } = useMutation({
 		mutationFn: uploadImage,
-		onSuccess: ({ fileName }) => {
+		onSuccess: ({ data: { fileName } }) => {
 			setImageFileName(fileName)
 		},
 		onError: (error) => {
@@ -81,7 +81,7 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 	})
 	const { mutate: createThreadMutation, isLoading: createThreadLoading } = useMutation({
 		mutationFn: createThread,
-		onSuccess: ({ id }) => {
+		onSuccess: ({ data: { id } }) => {
 			navigate(`/threads/${id}`)
 		},
 		onError: (error) => {
