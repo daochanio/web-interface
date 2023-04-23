@@ -1,7 +1,7 @@
 import { Flex, Heading, Text } from '@chakra-ui/react'
 import { useIntl } from 'react-intl'
 
-function Error() {
+function Unexpected() {
 	const intl = useIntl()
 	return (
 		<>
@@ -23,4 +23,4 @@ function Error() {
 	)
 }
 
-export default Error
+export default Unexpected
