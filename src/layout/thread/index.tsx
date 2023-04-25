@@ -8,11 +8,7 @@ import { Comments } from './Comments'
 export default function ThreadPage() {
 	const { threadId } = useParams()
 	const queryClient = useQueryClient()
-	const {
-		data: thread,
-		isLoading,
-		isError,
-	} = useQuery({
+	const { data, isLoading, isError } = useQuery({
 		queryKey: ['thread', threadId],
 		queryFn: () => queryFn({ threadId, offset: 0, limit: 1 }),
 		initialData: () => findInitialThread(queryClient, threadId),
@@ -23,14 +19,14 @@ export default function ThreadPage() {
 		return <Spinner />
 	}
 
-	if (isError || !thread) {
+	if (isError || !data) {
 		return <Unexpected />
 	}
 
 	return (
 		<div>
-			<ThreadHeader thread={thread} />
-			<Comments initialComments={thread.comments} />
+			<ThreadHeader thread={data.data} />
+			<Comments initialComments={data.data.comments} initialPage={data.nextPage} />
 		</div>
 	)
 }
@@ -61,7 +57,7 @@ function findInitialThread(queryClient: QueryClient, threadId?: string) {
 	for (const page of queryData.pages) {
 		for (const thread of page.data) {
 			if (thread.id.toString() === threadId) {
-				return thread
+				return { data: thread, nextPage: undefined }
 			}
 		}
 	}
@@ -72,6 +68,5 @@ async function queryFn({ threadId, offset, limit }: { threadId?: string; offset:
 		throw new Error('threadId is required')
 	}
 
-	const response = await getThreadById({ id: threadId, offset, limit })
-	return response.data
+	return getThreadById({ id: threadId, offset, limit })
 }

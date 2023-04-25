@@ -2,9 +2,9 @@ import { Button, Image, Spinner } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
-import { Comment, getCommentsByThreadId } from '../../common/api'
+import { Comment, getCommentsByThreadId, Page } from '../../common/api'
 
-export function Comments({ initialComments }: { initialComments?: Comment[] }) {
+export function Comments({ initialComments, initialPage }: { initialComments?: Comment[]; initialPage?: Page }) {
 	const { threadId } = useParams()
 	const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
 		queryKey: ['comments', threadId],
@@ -16,7 +16,7 @@ export function Comments({ initialComments }: { initialComments?: Comment[] }) {
 			}
 			return {
 				pageParams: [0],
-				pages: [{ data: initialComments, nextPage: { offset: 1, limit: 1, count: -1 } }],
+				pages: [{ data: initialComments, nextPage: initialPage }],
 			}
 		},
 		staleTime: Infinity,

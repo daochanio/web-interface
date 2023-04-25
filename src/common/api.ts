@@ -42,13 +42,15 @@ export type UploadImageResponse = {
 	contentType: string
 }
 
+export type Page = {
+	offset: number
+	limit: number
+	count: number
+}
+
 export type APIResponse<T> = {
 	data: T
-	nextPage?: {
-		offset: number
-		limit: number
-		count: number
-	}
+	nextPage?: Page
 }
 
 export async function getThreadById({ id, offset, limit }: { id: string; offset: number; limit: number }) {
