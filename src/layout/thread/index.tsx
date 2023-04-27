@@ -1,16 +1,19 @@
-import { Image, Spinner } from '@chakra-ui/react'
+import { Flex, Image, Spinner } from '@chakra-ui/react'
 import { InfiniteData, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { APIResponse, getThreadById, Thread } from '../../common/api'
 import Unexpected from '../unexpected'
 import { Comments } from './Comments'
+import { CreateCommentButton } from './createComment'
+
+export const COMMENT_PAGE_SIZE = 10
 
 export default function ThreadPage() {
 	const { threadId } = useParams()
 	const queryClient = useQueryClient()
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['thread', threadId],
-		queryFn: () => queryFn({ threadId, offset: 0, limit: 1 }),
+		queryFn: () => queryFn({ threadId, offset: 0, limit: COMMENT_PAGE_SIZE }),
 		initialData: () => findInitialThread(queryClient, threadId),
 		staleTime: Infinity,
 	})
@@ -26,6 +29,10 @@ export default function ThreadPage() {
 	return (
 		<div>
 			<ThreadHeader thread={data.data} />
+			<Flex>
+				<Flex grow={1} />
+				<CreateCommentButton />
+			</Flex>
 			<Comments initialComments={data.data.comments} initialPage={data.nextPage} />
 		</div>
 	)
@@ -46,7 +53,8 @@ function ThreadHeader({ thread }: { thread: Thread }) {
 // If the user is navigating from the home page we likely already have the thread in the cache.
 // Finding the thread in the cache is a PITA because its a nested array of pages of threads
 // TODO: Comments for the thread will be undefined since get all threads doesn't return hydrated comments
-// We can make get all threads return hydrated comments in the future
+// We can make get all threads return a small amount of hydrated comments in the future.
+// This may have performance implications though.
 function findInitialThread(queryClient: QueryClient, threadId?: string) {
 	const queryData: InfiniteData<APIResponse<Thread[]>> | undefined = queryClient.getQueryData(['threads'])
 

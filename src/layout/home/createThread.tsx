@@ -18,9 +18,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
 import { useSigner, useAccount } from 'wagmi'
-import { uploadImage, createThread } from '../../common/api'
+import { createThread } from '../../common/api'
 
 export function CreateThreadButton() {
 	const intl = useIntl()
@@ -59,30 +58,15 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 	const intl = useIntl()
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
-	const [imageFileName, setImageFileName] = useState('')
+	const [image, setImage] = useState<File>()
 	const { data: signer } = useSigner()
-	const navigate = useNavigate()
 	const toast = useToast()
 
-	const { mutate: uploadImageMutation, isLoading: uploadLoading } = useMutation({
-		mutationFn: uploadImage,
-		onSuccess: ({ data: { fileName } }) => {
-			setImageFileName(fileName)
-		},
-		onError: (error) => {
-			toast({
-				title: intl.formatMessage({ id: 'error-uploading-image', defaultMessage: 'Error uploading image' }),
-				status: 'error',
-				duration: 9000,
-				isClosable: true,
-			})
-			console.error(error)
-		},
-	})
-	const { mutate: createThreadMutation, isLoading: createThreadLoading } = useMutation({
+	const { mutate, isLoading } = useMutation({
 		mutationFn: createThread,
 		onSuccess: ({ data: { id } }) => {
-			navigate(`/threads/${id}`)
+			window.open(`/threads/${id}`, '_blank')
+			close()
 		},
 		onError: (error) => {
 			toast({
@@ -123,7 +107,7 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 							type="file"
 							accept="image/*"
 							onChange={(event) => {
-								if (!event.target.files) {
+								if (!event.target.files || event.target.files.length < 1) {
 									toast({
 										title: intl.formatMessage({
 											id: 'error-uploading-image',
@@ -135,20 +119,20 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 									})
 									return
 								}
-								uploadImageMutation({ image: event.target.files[0], signer })
+								setImage(event.target.files[0])
 							}}
 						/>
 					</FormControl>
 				</ModalBody>
 
 				<ModalFooter>
-					<Button
-						isDisabled={!title || !content || !imageFileName}
-						isLoading={uploadLoading || createThreadLoading}
-						onClick={() => createThreadMutation({ title, content, imageFileName, signer })}
-					>
-						{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}
-					</Button>
+					{!title || !content || !image ? (
+						<Button isDisabled>{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}</Button>
+					) : (
+						<Button isLoading={isLoading} onClick={() => mutate({ title, content, image, signer })}>
+							{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}
+						</Button>
+					)}
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

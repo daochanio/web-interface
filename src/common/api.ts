@@ -32,10 +32,6 @@ export type Comment = {
 	votes: number
 }
 
-export type CreateThreadResponse = {
-	id: string
-}
-
 export type UploadImageResponse = {
 	fileName: string
 	url: string
@@ -79,6 +75,52 @@ export async function getThreads({ limit }: { limit: number }) {
 	})
 }
 
+export async function createThread({
+	title,
+	content,
+	signer,
+	image,
+}: {
+	title: string
+	content: string
+	image: File
+	signer?: FetchSignerResult<Signer>
+}) {
+	const {
+		data: { fileName: imageFileName },
+	} = await uploadImage({ image, signer })
+
+	return api<Thread>('/threads', {
+		method: 'POST',
+		body: JSON.stringify({ title, content, imageFileName }),
+		signer,
+	})
+}
+
+export async function createComment({
+	threadId,
+	content,
+	signer,
+	image,
+	repliedToCommentId,
+}: {
+	threadId: string
+	content: string
+	image: File
+	repliedToCommentId?: string
+	signer?: FetchSignerResult<Signer>
+}) {
+	const {
+		data: { fileName: imageFileName },
+	} = await uploadImage({ image, signer })
+
+	return api<Comment>(`/threads/${threadId}/comments`, {
+		method: 'POST',
+		body: JSON.stringify({ threadId, content, imageFileName, repliedToCommentId }),
+		signer,
+	})
+}
+
 export async function uploadImage({ image, signer }: { image: File; signer?: FetchSignerResult<Signer> }) {
 	const formData = new FormData()
 	formData.append('image', image)
@@ -86,24 +128,6 @@ export async function uploadImage({ image, signer }: { image: File; signer?: Fet
 	return api<UploadImageResponse>('/images', {
 		method: 'POST',
 		body: formData,
-		signer,
-	})
-}
-
-export async function createThread({
-	title,
-	content,
-	signer,
-	imageFileName,
-}: {
-	title: string
-	content: string
-	imageFileName: string
-	signer?: FetchSignerResult<Signer>
-}) {
-	return api<CreateThreadResponse>('/threads', {
-		method: 'POST',
-		body: JSON.stringify({ title, content, imageFileName }),
 		signer,
 	})
 }

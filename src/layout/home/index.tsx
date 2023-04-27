@@ -6,10 +6,12 @@ import { getThreads } from '../../common/api'
 import Unexpected from '../unexpected'
 import { CreateThreadButton } from './createThread'
 
+const THREAD_PAGE_SIZE = 10
+
 export default function Home() {
 	const { data, isLoading, isError, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
 		queryKey: ['threads'],
-		queryFn: () => getThreads({ limit: 1 }),
+		queryFn: () => getThreads({ limit: THREAD_PAGE_SIZE }),
 		getNextPageParam: () => 0,
 		staleTime: Infinity,
 	})

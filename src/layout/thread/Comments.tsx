@@ -2,13 +2,15 @@ import { Button, Image, Spinner } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
+import { COMMENT_PAGE_SIZE } from '.'
 import { Comment, getCommentsByThreadId, Page } from '../../common/api'
+import { ReplyToCommentButton } from './createComment'
 
 export function Comments({ initialComments, initialPage }: { initialComments?: Comment[]; initialPage?: Page }) {
 	const { threadId } = useParams()
 	const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
 		queryKey: ['comments', threadId],
-		queryFn: ({ pageParam }) => queryFn({ threadId, offset: pageParam ?? 0, limit: 1 }),
+		queryFn: ({ pageParam }) => queryFn({ threadId, offset: pageParam ?? 0, limit: COMMENT_PAGE_SIZE }),
 		getNextPageParam: ({ nextPage }) => nextPage?.offset,
 		initialData: () => {
 			if (!initialComments) {
@@ -31,6 +33,7 @@ export function Comments({ initialComments, initialPage }: { initialComments?: C
 							<div key={comment.id}>
 								{comment.image && <Image src={comment.image.url} maxWidth={250} maxHeight={250} />}
 								<p>{comment.content}</p>
+								<ReplyToCommentButton repliedToCommentId={comment.id} />
 							</div>
 						))}
 					</Fragment>
