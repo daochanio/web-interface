@@ -1,10 +1,15 @@
-import { Flex, Image, Spinner } from '@chakra-ui/react'
+import { Flex, Spinner, Button, Icon } from '@chakra-ui/react'
 import { InfiniteData, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { APIResponse, getThreadById, Thread } from '../../common/api'
+import { ThreadHeader } from '../common/ThreadHeader'
 import Unexpected from '../unexpected'
 import { Comments } from './Comments'
-import { CreateCommentButton } from './createComment'
+import { useState } from 'react'
+import { HiPlus } from 'react-icons/hi'
+import { useIntl } from 'react-intl'
+import { CreateCommentModal } from '../common/CreateCommentModal'
+import { ConnectController } from '../common/ConnectController'
 
 export const COMMENT_PAGE_SIZE = 10
 
@@ -28,25 +33,13 @@ export default function ThreadPage() {
 
 	return (
 		<div>
-			<ThreadHeader thread={data.data} />
 			<Flex>
 				<Flex grow={1} />
 				<CreateCommentButton />
 			</Flex>
+			<ThreadHeader thread={data.data} />
 			<Comments initialComments={data.data.comments} initialPage={data.nextPage} />
 		</div>
-	)
-}
-
-function ThreadHeader({ thread }: { thread: Thread }) {
-	const { image, content, title } = thread
-
-	return (
-		<>
-			<h1>{title}</h1>
-			{image && <Image src={image.url} maxWidth={250} maxHeight={250} />}
-			<p>{content}</p>
-		</>
 	)
 }
 
@@ -77,4 +70,22 @@ async function queryFn({ threadId, offset, limit }: { threadId?: string; offset:
 	}
 
 	return getThreadById({ id: threadId, offset, limit })
+}
+
+function CreateCommentButton() {
+	const intl = useIntl()
+	const [isOpen, setIsOpen] = useState(false)
+	return (
+		<>
+			<ConnectController>
+				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
+					{intl.formatMessage({
+						id: 'create-a-comment',
+						defaultMessage: 'New Comment',
+					})}
+				</Button>
+			</ConnectController>
+			{isOpen && <CreateCommentModal isOpen={isOpen} close={() => setIsOpen(false)} />}
+		</>
+	)
 }

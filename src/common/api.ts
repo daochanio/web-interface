@@ -1,4 +1,6 @@
 import { Signer, FetchSignerResult } from '@wagmi/core'
+import { VoteType } from './constants'
+import { getItem, setItem } from './storage'
 
 export type Thread = {
 	id: string
@@ -10,7 +12,7 @@ export type Thread = {
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
-	votes: number
+	votes: string
 }
 
 export type Image = {
@@ -29,7 +31,7 @@ export type Comment = {
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
-	votes: number
+	votes: string
 }
 
 export type UploadImageResponse = {
@@ -132,6 +134,38 @@ export async function uploadImage({ image, signer }: { image: File; signer?: Fet
 	})
 }
 
+export async function createThreadVote({
+	threadId,
+	voteType,
+	signer,
+}: {
+	threadId: string
+	voteType: VoteType
+	signer?: FetchSignerResult<Signer>
+}) {
+	return api<Thread>(`/threads/${threadId}/votes/${voteType}`, {
+		method: 'PUT',
+		signer,
+	})
+}
+
+export async function createCommentVote({
+	threadId,
+	commentId,
+	voteType,
+	signer,
+}: {
+	threadId: string
+	commentId: string
+	voteType: VoteType
+	signer?: FetchSignerResult<Signer>
+}) {
+	return api<Comment>(`/threads/${threadId}/comments/${commentId}/votes/${voteType}`, {
+		method: 'PUT',
+		signer,
+	})
+}
+
 type QueryParam = { key: string; value: string | number }
 
 async function api<T>(
@@ -184,8 +218,8 @@ export async function signMessage({
 	noCache?: boolean
 }): Promise<{ signature: string; address: string }> {
 	const address = await signer.getAddress()
-	const storageSignature = window.localStorage.getItem(`daochan_signature_${address}`)
-	const storageSignatureExpirey = window.localStorage.getItem(`daochan_signature_expirey_${address}`)
+	const storageSignature = getItem('signature', address)
+	const storageSignatureExpirey = getItem('expirey', address)
 
 	if (
 		!noCache &&
@@ -211,8 +245,8 @@ export async function signMessage({
 
 	const signature = await signer.signMessage(message)
 
-	window.localStorage.setItem(`daochan_signature_${address}`, signature)
-	window.localStorage.setItem(`daochan_signature_expirey_${address}`, expires.toString())
+	setItem('signature', address, signature)
+	setItem('expirey', address, expires.toString())
 
 	return { signature, address }
 }

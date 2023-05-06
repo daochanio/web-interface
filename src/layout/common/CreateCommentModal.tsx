@@ -8,91 +8,21 @@ import {
 	ModalFooter,
 	Button,
 	Text,
-	Icon,
-	Tooltip,
 	useToast,
 	FormControl,
 	Input,
 } from '@chakra-ui/react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
-import { useSigner, useAccount } from 'wagmi'
-import { RxChatBubble } from 'react-icons/rx'
+import { useSigner } from 'wagmi'
 import { APIResponse, Comment, createComment } from '../../common/api'
-
-export function CreateCommentButton() {
-	const intl = useIntl()
-	const [isOpen, setIsOpen] = useState(false)
-	const { data: signer } = useSigner()
-	const { isConnected } = useAccount()
-
-	const isDisabled = !signer || !isConnected
-
-	return (
-		<>
-			<Tooltip
-				isDisabled={!isDisabled}
-				label={intl.formatMessage({ id: 'connect-wallet-tooltip', defaultMessage: 'Connect to your wallet' })}
-			>
-				<Button
-					rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />}
-					isDisabled={isDisabled}
-					onClick={() => setIsOpen(true)}
-				>
-					{intl.formatMessage({
-						id: 'create-a-comment',
-						defaultMessage: 'New Comment',
-					})}
-				</Button>
-			</Tooltip>
-			{isOpen && <CreateCommentModal isOpen={isOpen} close={() => setIsOpen(false)} />}
-		</>
-	)
-}
-
-export function ReplyToCommentButton({ repliedToCommentId }: { repliedToCommentId: string }) {
-	const intl = useIntl()
-	const [isOpen, setIsOpen] = useState(false)
-	const { data: signer } = useSigner()
-	const { isConnected } = useAccount()
-
-	const isDisabled = !signer || !isConnected
-
-	return (
-		<>
-			<Tooltip
-				isDisabled={!isDisabled}
-				label={intl.formatMessage({ id: 'connect-wallet-tooltip', defaultMessage: 'Connect to your wallet' })}
-			>
-				<Button
-					size="xs"
-					variant="ghost"
-					bg="gray.900"
-					_hover={{ bg: 'gray.700' }}
-					leftIcon={<Icon as={RxChatBubble} w={4} h={4} color="brand.200" />}
-					isDisabled={isDisabled}
-					onClick={() => setIsOpen(true)}
-				>
-					{intl.formatMessage({
-						id: 'reply-to-comment',
-						defaultMessage: 'Reply',
-					})}
-				</Button>
-			</Tooltip>
-			{isOpen && (
-				<CreateCommentModal isOpen={isOpen} close={() => setIsOpen(false)} repliedToCommentId={repliedToCommentId} />
-			)}
-		</>
-	)
-}
 
 // TODO:
 // - full form validation
 // - comment preview
-function CreateCommentModal({
+export function CreateCommentModal({
 	isOpen,
 	close,
 	repliedToCommentId,
@@ -151,8 +81,8 @@ function CreateCommentModal({
 				<ModalHeader>
 					<Text textAlign="center">
 						{intl.formatMessage({
-							id: 'create-a-new-thread',
-							defaultMessage: 'Create New Thread',
+							id: 'create-a-new-comment',
+							defaultMessage: 'Create New Comment',
 						})}
 					</Text>
 				</ModalHeader>
@@ -161,7 +91,7 @@ function CreateCommentModal({
 					<FormControl>
 						<Input
 							type="text"
-							placeholder={intl.formatMessage({ id: 'thread-content', defaultMessage: 'content' })}
+							placeholder={intl.formatMessage({ id: 'comment-content', defaultMessage: 'content' })}
 							onChange={(event) => setContent(event.target.value)}
 						/>
 						<Input
