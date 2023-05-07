@@ -60,7 +60,7 @@ function reducer(state: State, action: { type: string; payload?: VoteType }): St
 			return { ...state, activeVoteType: action.payload }
 		}
 		case 'ACCEPT_PENDING': {
-			if (!state.pendingVoteType || !state.pendingVotes) {
+			if (state.pendingVoteType === undefined || state.pendingVotes === undefined) {
 				return state
 			}
 			return {
@@ -91,7 +91,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 		mutationFn: createThreadVote,
 		onSuccess: () => {
 			const { pendingVoteType, pendingVotes } = state
-			if (!pendingVoteType || !pendingVotes) {
+			if (pendingVoteType === undefined || pendingVotes === undefined) {
 				return
 			}
 
