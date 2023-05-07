@@ -63,23 +63,22 @@ function ReplyToCommentButton({ repliedToCommentId, isDisabled }: { repliedToCom
 type State = {
 	pendingVoteType: VoteType | undefined
 	activeVoteType: VoteType
-	pendingVotes: string | undefined
-	activeVotes: string
+	pendingVotes: number | undefined
+	activeVotes: number
 }
 const initialState: State = {
 	pendingVoteType: undefined,
 	pendingVotes: undefined,
 	activeVoteType: VoteType.Unvote,
-	activeVotes: '0',
+	activeVotes: 0,
 }
 
 function reducer(state: State, action: { type: string; payload?: VoteType }): State {
 	switch (action.type) {
 		case 'SET_PENDING': {
-			const votes = BigInt(state.activeVotes)
 			const diff = getVoteValue(action.payload) - getVoteValue(state.activeVoteType)
-			const pendingVotes = votes + BigInt(diff)
-			return { ...state, pendingVoteType: action.payload, pendingVotes: pendingVotes.toString() }
+			const pendingVotes = state.activeVotes + diff
+			return { ...state, pendingVoteType: action.payload, pendingVotes }
 		}
 		case 'SET_ACTIVE_TYPE': {
 			if (!action.payload) {
@@ -116,7 +115,7 @@ function VoteComponent({
 }: {
 	threadId: string
 	commentId: string
-	count: string
+	count: number
 	isDisabled: boolean
 }) {
 	const toast = useToast()

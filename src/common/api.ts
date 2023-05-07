@@ -12,7 +12,7 @@ export type Thread = {
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
-	votes: string
+	votes: number
 }
 
 export type Image = {
@@ -31,7 +31,7 @@ export type Comment = {
 	isDeleted: boolean
 	createdAt: string
 	updatedAt: string
-	votes: string
+	votes: number
 }
 
 export type UploadImageResponse = {
