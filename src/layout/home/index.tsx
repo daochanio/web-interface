@@ -1,10 +1,15 @@
-import { Button, Flex, Image, LinkBox, LinkOverlay, List, ListItem, Spinner, Text } from '@chakra-ui/react'
+import { Button, Flex, LinkBox, LinkOverlay, List, ListItem, Spinner, Icon } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { getThreads } from '../../common/api'
+import { ThreadHeader } from '../common/ThreadHeader'
 import Unexpected from '../unexpected'
-import { CreateThreadButton } from './createThread'
+import { useState } from 'react'
+import { HiPlus } from 'react-icons/hi'
+import { useIntl } from 'react-intl'
+import { CreateThreadModal } from '../common/CreateThreadModal'
+import { ConnectController } from '../common/ConnectController'
 
 const THREAD_PAGE_SIZE = 10
 
@@ -35,12 +40,10 @@ export default function Home() {
 					<Fragment key={i}>
 						{group.data.map((thread) => (
 							<ListItem key={thread.id}>
-								<LinkBox>
+								<LinkBox _hover={{ bg: 'gray.700' }}>
 									<LinkOverlay as={RouterLink} to={`/threads/${thread.id}`}>
-										{thread.title}
+										<ThreadHeader thread={thread} />
 									</LinkOverlay>
-									{thread.image && <Image src={thread.image.url} maxWidth={250} maxHeight={250} />}
-									<Text as="p">{thread.content}</Text>
 								</LinkBox>
 							</ListItem>
 						))}
@@ -55,14 +58,27 @@ export default function Home() {
 	)
 }
 
+function CreateThreadButton() {
+	const intl = useIntl()
+	const [isOpen, setIsOpen] = useState(false)
+
+	return (
+		<>
+			<ConnectController>
+				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
+					{intl.formatMessage({
+						id: 'create-a-thread',
+						defaultMessage: 'New Thread',
+					})}
+				</Button>
+			</ConnectController>
+			<CreateThreadModal isOpen={isOpen} close={() => setIsOpen(false)} />
+		</>
+	)
+}
+
 // TODO: Turn this into infinite scrolling
-export function MoreButton({
-	isFetchingNextPage,
-	fetchNextPage,
-}: {
-	isFetchingNextPage: boolean
-	fetchNextPage: () => void
-}) {
+function MoreButton({ isFetchingNextPage, fetchNextPage }: { isFetchingNextPage: boolean; fetchNextPage: () => void }) {
 	if (isFetchingNextPage) {
 		return <Spinner color="brand.200" />
 	}

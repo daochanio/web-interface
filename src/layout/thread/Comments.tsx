@@ -1,10 +1,10 @@
-import { Button, Image, Spinner } from '@chakra-ui/react'
+import { Button, Spinner } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 import { COMMENT_PAGE_SIZE } from '.'
 import { Comment, getCommentsByThreadId, Page } from '../../common/api'
-import { ReplyToCommentButton } from './createComment'
+import { CommentComponent } from '../common/Comment'
 
 export function Comments({ initialComments, initialPage }: { initialComments?: Comment[]; initialPage?: Page }) {
 	const { threadId } = useParams()
@@ -30,11 +30,9 @@ export function Comments({ initialComments, initialPage }: { initialComments?: C
 				data.pages.map((group, i) => (
 					<Fragment key={i}>
 						{group.data.map((comment) => (
-							<div key={comment.id}>
-								{comment.image && <Image src={comment.image.url} maxWidth={250} maxHeight={250} />}
-								<p>{comment.content}</p>
-								<ReplyToCommentButton repliedToCommentId={comment.id} />
-							</div>
+							<Fragment key={comment.id}>
+								<CommentComponent comment={comment} />
+							</Fragment>
 						))}
 					</Fragment>
 				))}
@@ -44,7 +42,7 @@ export function Comments({ initialComments, initialPage }: { initialComments?: C
 }
 
 // TODO: Turn this into infinite scrolling
-export function MoreButton({
+function MoreButton({
 	hasNextPage,
 	isFetchingNextPage,
 	fetchNextPage,

@@ -8,53 +8,20 @@ import {
 	ModalFooter,
 	Button,
 	Text,
-	Icon,
-	Tooltip,
 	useToast,
 	FormControl,
 	Input,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
-import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
-import { useSigner, useAccount } from 'wagmi'
+import { useSigner } from 'wagmi'
 import { createThread } from '../../common/api'
-
-export function CreateThreadButton() {
-	const intl = useIntl()
-	const [isOpen, setIsOpen] = useState(false)
-	const { data: signer } = useSigner()
-	const { isConnected } = useAccount()
-
-	const isDisabled = !signer || !isConnected
-
-	return (
-		<>
-			<Tooltip
-				isDisabled={!isDisabled}
-				label={intl.formatMessage({ id: 'connect-wallet-tooltip', defaultMessage: 'Connect to your wallet' })}
-			>
-				<Button
-					rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />}
-					isDisabled={isDisabled}
-					onClick={() => setIsOpen(true)}
-				>
-					{intl.formatMessage({
-						id: 'create-a-thread',
-						defaultMessage: 'New Thread',
-					})}
-				</Button>
-			</Tooltip>
-			<CreateThreadModal isOpen={isOpen} close={() => setIsOpen(false)} />
-		</>
-	)
-}
 
 // TODO:
 // - full form validation
 // - thread preview
-function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => void }) {
+export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => void }) {
 	const intl = useIntl()
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
@@ -65,8 +32,8 @@ function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: () => vo
 	const { mutate, isLoading } = useMutation({
 		mutationFn: createThread,
 		onSuccess: ({ data: { id } }) => {
-			window.open(`/threads/${id}`, '_blank')
 			close()
+			window.open(`/threads/${id}`, '_blank')
 		},
 		onError: (error) => {
 			toast({
