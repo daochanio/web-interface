@@ -17,7 +17,7 @@ export default function ThreadPage() {
 	const { threadId } = useParams()
 	const queryClient = useQueryClient()
 	const { data, isLoading, isError } = useQuery({
-		queryKey: ['thread', threadId],
+		queryKey: ['threads', threadId],
 		queryFn: () => queryFn({ threadId, offset: 0, limit: COMMENT_PAGE_SIZE }),
 		initialData: () => findInitialThread(queryClient, threadId),
 		staleTime: Infinity,

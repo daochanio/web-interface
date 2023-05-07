@@ -1,15 +1,15 @@
-import { Button, Flex, Image, Spinner } from '@chakra-ui/react'
+import { Button, Image } from '@chakra-ui/react'
 import { APIResponse, Comment, createCommentVote } from '../../common/api'
 import { useSigner, useAccount } from 'wagmi'
 import { RxChatBubble } from 'react-icons/rx'
 import { CreateCommentModal } from '../common/CreateCommentModal'
-import { Icon, IconButton, Text, useToast } from '@chakra-ui/react'
+import { Icon, IconButton, useToast } from '@chakra-ui/react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
-import { VoteType } from '../../common/constants'
+import { getVoteValue, VoteType } from '../../common/constants'
 import { getItem, setItem } from '../../common/storage'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { ConnectController } from './ConnectController'
 
@@ -57,7 +57,54 @@ function ReplyToCommentButton({ repliedToCommentId, isDisabled }: { repliedToCom
  * We also don't wan't to call the api to check whether they have voted or not for every thread/comment we render
  * This would be incredibly expensive and slow
  * So we both cache the user's votes in local storage and also render the user's votes optimistically
+ * by maintaining the concept of a pending vote that is accepted/rejected on success/failure of the api call
  */
+
+type State = {
+	pendingVoteType: VoteType | undefined
+	activeVoteType: VoteType
+	pendingVotes: string | undefined
+	activeVotes: string
+}
+const initialState: State = {
+	pendingVoteType: undefined,
+	pendingVotes: undefined,
+	activeVoteType: VoteType.Unvote,
+	activeVotes: '0',
+}
+
+function reducer(state: State, action: { type: string; payload: any }): State {
+	switch (action.type) {
+		case 'SET_PENDING': {
+			const votes = BigInt(state.activeVotes)
+			const diff = getVoteValue(action.payload) - getVoteValue(state.activeVoteType)
+			const pendingVotes = votes + BigInt(diff)
+			return { ...state, pendingVoteType: action.payload, pendingVotes: pendingVotes.toString() }
+		}
+		case 'SET_ACTIVE_TYPE': {
+			return { ...state, activeVoteType: action.payload }
+		}
+		case 'ACCEPT_PENDING': {
+			if (!state.pendingVoteType || !state.pendingVotes) {
+				return state
+			}
+			return {
+				...state,
+				activeVotes: state.pendingVotes,
+				activeVoteType: state.pendingVoteType,
+				pendingVotes: undefined,
+				pendingVoteType: undefined,
+			}
+		}
+		case 'REJECT_PENDING': {
+			return { ...state, pendingVotes: undefined, pendingVoteType: undefined }
+		}
+		default: {
+			throw new Error('Invalid action type')
+		}
+	}
+}
+
 function VoteComponent({
 	threadId,
 	commentId,
@@ -73,24 +120,19 @@ function VoteComponent({
 	const intl = useIntl()
 	const { data: signer } = useSigner()
 	const { address } = useAccount()
-	const [pendingVoteType, setPendingVoteType] = useState<VoteType | undefined>()
-	const [activeVoteType, setActiveVoteType] = useState<VoteType>(VoteType.Unvote)
+	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
 		mutationFn: createCommentVote,
 		onSuccess: () => {
-			if (!pendingVoteType) {
+			const { pendingVoteType, pendingVotes } = state
+			if (!pendingVoteType || !pendingVotes) {
 				return
 			}
-			// store the users vote in local storage
-			// update the comment count in the query cache
-			// clear the pending vote
 
-			const votes = BigInt(count)
-			console.log(activeVoteType, pendingVoteType)
-
-			//TODO: bigint and account for unvote
-			// maybe check cache before setting to find if there is an old vote
+			// 1. update the comment votes in the query cache
+			// 2. store the users vote in local storage
+			// 3. clear the pending vote
 			queryClient.setQueryData(['comments', threadId], (oldData: InfiniteData<APIResponse<Comment[]>> | undefined) => {
 				if (!oldData) {
 					return
@@ -104,10 +146,7 @@ function VoteComponent({
 								if (comment.id === commentId) {
 									return {
 										...comment,
-										votes:
-											pendingVoteType === VoteType.Upvote
-												? `${parseInt(comment.votes) + 1}`
-												: `${parseInt(comment.votes) - 1}`,
+										votes: pendingVotes,
 									}
 								}
 								return comment
@@ -118,11 +157,10 @@ function VoteComponent({
 			})
 
 			setItem('comment.vote', `${address}.${commentId}`, pendingVoteType) // cache the vote
-			setActiveVoteType(pendingVoteType) // accept the pending vote type
-			setPendingVoteType(undefined) // clear the pending vote type
+			dispatch({ type: 'ACCEPT_PENDING', payload: null })
 		},
 		onError: (error) => {
-			setPendingVoteType(undefined) // clear the pending vote type
+			dispatch({ type: 'REJECT_PENDING', payload: null })
 			toast({
 				title: intl.formatMessage({ id: 'error-creating-comment-vote', defaultMessage: 'Error voting on comment' }),
 				status: 'error',
@@ -132,26 +170,33 @@ function VoteComponent({
 		},
 	})
 
-	const onClick = (clickedVoteType: VoteType) => {
-		const newVoteType = activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
-		setPendingVoteType(newVoteType)
-		mutate({ threadId, commentId, signer, voteType: newVoteType })
-	}
-
 	useEffect(() => {
+		if (!address) {
+			return
+		}
 		// check local storage for the user's vote on mount/address change
-		if (address) {
-			const cachedVoteType = getItem('comment.vote', `${address}.${commentId}`) as VoteType | undefined
-			if (cachedVoteType) {
-				setActiveVoteType(cachedVoteType)
-			}
+		const cachedVoteType = getItem('comment.vote', `${address}.${commentId}`) as VoteType | undefined
+		if (cachedVoteType) {
+			dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
 		}
 	}, [address, commentId])
 
-	// optimistically take the pending vote type if present
-	// otherwise take the active vote type
+	// set pending data and asynchronously update the vote
+	const onClick = (clickedVoteType: VoteType) => {
+		// don't let the user fire multiple mutations at the same time
+		// we will get out of sync between storage and the api
+		if (isLoading) {
+			return
+		}
+		const newVoteType = state.activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
+		dispatch({ type: 'SET_PENDING', payload: newVoteType })
+		mutate({ threadId, commentId, signer, voteType: newVoteType })
+	}
 
-	const voteType = pendingVoteType ?? activeVoteType
+	// optimistically take the pending data if present
+	// otherwise take the active data
+	const voteType = state.pendingVoteType ?? state.activeVoteType
+	const votes = state.pendingVotes ?? state.activeVotes
 
 	return (
 		<>
@@ -172,7 +217,7 @@ function VoteComponent({
 				w={4}
 				h={4}
 			/>
-			{isLoading ? <Spinner w={2} h={2} /> : <Text as="span">{count}</Text>}
+			{votes}
 			<IconButton
 				aria-label="downvote"
 				isDisabled={isDisabled}
