@@ -73,7 +73,7 @@ const initialState: State = {
 	activeVotes: '0',
 }
 
-function reducer(state: State, action: { type: string; payload: any }): State {
+function reducer(state: State, action: { type: string; payload?: VoteType }): State {
 	switch (action.type) {
 		case 'SET_PENDING': {
 			const votes = BigInt(state.activeVotes)
@@ -82,6 +82,9 @@ function reducer(state: State, action: { type: string; payload: any }): State {
 			return { ...state, pendingVoteType: action.payload, pendingVotes: pendingVotes.toString() }
 		}
 		case 'SET_ACTIVE_TYPE': {
+			if (!action.payload) {
+				return state
+			}
 			return { ...state, activeVoteType: action.payload }
 		}
 		case 'ACCEPT_PENDING': {
@@ -157,10 +160,10 @@ function VoteComponent({
 			})
 
 			setItem('comment.vote', `${address}.${commentId}`, pendingVoteType) // cache the vote
-			dispatch({ type: 'ACCEPT_PENDING', payload: null })
+			dispatch({ type: 'ACCEPT_PENDING' })
 		},
 		onError: (error) => {
-			dispatch({ type: 'REJECT_PENDING', payload: null })
+			dispatch({ type: 'REJECT_PENDING' })
 			toast({
 				title: intl.formatMessage({ id: 'error-creating-comment-vote', defaultMessage: 'Error voting on comment' }),
 				status: 'error',
@@ -176,9 +179,7 @@ function VoteComponent({
 		}
 		// check local storage for the user's vote on mount/address change
 		const cachedVoteType = getItem('comment.vote', `${address}.${commentId}`) as VoteType | undefined
-		if (cachedVoteType) {
-			dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
-		}
+		dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
 	}, [address, commentId])
 
 	// set pending data and asynchronously update the vote

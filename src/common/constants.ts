@@ -4,7 +4,7 @@ export enum VoteType {
 	Unvote = 'unvote',
 }
 
-export function getVoteValue(voteType: VoteType) {
+export function getVoteValue(voteType: VoteType | undefined) {
 	switch (voteType) {
 		case VoteType.Upvote:
 			return 1

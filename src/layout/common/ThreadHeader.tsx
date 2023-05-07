@@ -46,7 +46,7 @@ const initialState: State = {
 	activeVotes: '0',
 }
 
-function reducer(state: State, action: { type: string; payload: any }): State {
+function reducer(state: State, action: { type: string; payload?: VoteType }): State {
 	switch (action.type) {
 		case 'SET_PENDING': {
 			const votes = BigInt(state.activeVotes)
@@ -55,6 +55,9 @@ function reducer(state: State, action: { type: string; payload: any }): State {
 			return { ...state, pendingVoteType: action.payload, pendingVotes: pendingVotes.toString() }
 		}
 		case 'SET_ACTIVE_TYPE': {
+			if (!action.payload) {
+				return state
+			}
 			return { ...state, activeVoteType: action.payload }
 		}
 		case 'ACCEPT_PENDING': {
@@ -100,7 +103,6 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 				if (!oldData) {
 					return
 				}
-
 				return {
 					pageParams: oldData.pageParams,
 					pages: oldData.pages.map((page) => {
@@ -123,7 +125,6 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 				if (!oldData) {
 					return
 				}
-
 				return {
 					...oldData,
 					data: {
@@ -134,10 +135,10 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 			})
 
 			setItem('thread.vote', `${address}.${threadId}`, pendingVoteType) // cache the vote
-			dispatch({ type: 'ACCEPT_PENDING', payload: null })
+			dispatch({ type: 'ACCEPT_PENDING' })
 		},
 		onError: (error) => {
-			dispatch({ type: 'REJECT_PENDING', payload: null })
+			dispatch({ type: 'REJECT_PENDING' })
 			toast({
 				title: intl.formatMessage({ id: 'error-creating-thread-vote', defaultMessage: 'Error voting on thread' }),
 				status: 'error',
