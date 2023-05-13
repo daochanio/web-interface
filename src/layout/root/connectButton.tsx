@@ -1,4 +1,4 @@
-import { MdKeyboardArrowDown, MdLanguage, MdLogin, MdOutlineCancel } from 'react-icons/md'
+import { MdKeyboardArrowDown, MdLanguage, MdOutlineCancel } from 'react-icons/md'
 import { TbPlugConnected } from 'react-icons/tb'
 import {
 	Button,
@@ -19,12 +19,13 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Connector, useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 import { useMutation } from '@tanstack/react-query'
 import useDisplayAddress from '../../hooks/useDisplayAddress'
 import { signMessage } from '../../common/api'
+import { discardSignature } from '../../common/storage'
 
 export default function ConnectButton() {
 	const { isConnected } = useAccount()
@@ -37,8 +38,18 @@ export default function ConnectButton() {
 }
 
 function ProfileButton() {
-	const account = useAccount()
-	const shortAddress = useDisplayAddress(account?.address)
+	const { address } = useAccount()
+	const shortAddress = useDisplayAddress(address)
+	const { data: signer } = useSigner()
+	const { mutate } = useMutation({
+		mutationFn: async () => {
+			if (signer) {
+				await signMessage({ signer })
+			}
+		},
+	})
+
+	useEffect(() => mutate(), [address, mutate, signer])
 
 	return (
 		<Menu>
@@ -62,57 +73,12 @@ function ProfileButton() {
 						{shortAddress}
 					</MenuButton>
 					<MenuList>
-						<SignMessageMenuItem />
 						<SwitchNetworkMenuItem />
 						<DisconnectMenuItem />
 					</MenuList>
 				</>
 			)}
 		</Menu>
-	)
-}
-
-function SignMessageMenuItem() {
-	const intl = useIntl()
-	const toast = useToast()
-	const { data: signer } = useSigner()
-	const { mutate } = useMutation({
-		mutationFn: signMessage,
-		onSuccess: () => {
-			toast({
-				title: intl.formatMessage({ id: 'success-logging-in', defaultMessage: 'Successfully logged in!' }),
-				status: 'success',
-				duration: 9000,
-				isClosable: true,
-			})
-		},
-		onError: (error) => {
-			toast({
-				title: intl.formatMessage({ id: 'error-logging-in', defaultMessage: 'Error logging in' }),
-				status: 'error',
-				duration: 9000,
-				isClosable: true,
-			})
-			console.error(error)
-		},
-	})
-
-	if (!signer) {
-		return <></>
-	}
-
-	return (
-		<MenuItem onClick={() => mutate({ signer, noCache: true })}>
-			<Flex alignItems="center">
-				<Icon as={MdLogin} w={5} h={5} color="brand.200" />
-			</Flex>
-			<Text ml={3} color="brand.200">
-				{intl.formatMessage({
-					id: 'sign-in',
-					defaultMessage: 'Sign in',
-				})}
-			</Text>
-		</MenuItem>
 	)
 }
 
@@ -173,9 +139,19 @@ function SwitchNetworkMenuItem() {
 
 function DisconnectMenuItem() {
 	const intl = useIntl()
-	const { disconnect } = useDisconnect()
+	const { address } = useAccount()
+	const { disconnectAsync } = useDisconnect()
+	const { mutate } = useMutation({
+		mutationFn: async () => {
+			await disconnectAsync()
+			if (address) {
+				discardSignature(address)
+			}
+		},
+	})
+
 	return (
-		<MenuItem onClick={() => disconnect()}>
+		<MenuItem onClick={() => mutate()}>
 			<Flex alignItems="center">
 				<Icon color="red.500" as={MdOutlineCancel} w={5} h={5} />
 			</Flex>
