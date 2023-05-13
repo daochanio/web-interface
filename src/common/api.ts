@@ -1,6 +1,6 @@
 import { Signer, FetchSignerResult } from '@wagmi/core'
 import { VoteType } from './constants'
-import { getItem, setItem } from './storage'
+import { getSignature, setSignature } from './storage'
 
 export type Thread = {
 	id: string
@@ -32,6 +32,11 @@ export type Comment = {
 	createdAt: string
 	updatedAt: string
 	votes: number
+}
+
+export type Challenge = {
+	message: string
+	expires: number
 }
 
 export type UploadImageResponse = {
@@ -218,19 +223,13 @@ export async function signMessage({
 	noCache?: boolean
 }): Promise<{ signature: string; address: string }> {
 	const address = await signer.getAddress()
-	const storageSignature = getItem('signature', address)
-	const storageSignatureExpirey = getItem('expirey', address)
+	const signature = getSignature(address)
 
-	if (
-		!noCache &&
-		storageSignature &&
-		storageSignatureExpirey &&
-		Number.parseInt(storageSignatureExpirey) > Date.now() / 1000
-	) {
-		return { signature: storageSignature, address }
+	if (!noCache && signature) {
+		return { signature, address }
 	}
 
-	const response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/challenge`, {
+	const response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin`, {
 		method: 'PUT',
 		body: JSON.stringify({ address }),
 	})
@@ -241,12 +240,11 @@ export async function signMessage({
 
 	const {
 		data: { message, expires },
-	} = await response.json()
+	}: APIResponse<Challenge> = await response.json()
 
-	const signature = await signer.signMessage(message)
+	const sig = await signer.signMessage(message)
 
-	setItem('signature', address, signature)
-	setItem('expirey', address, expires.toString())
+	setSignature(address, sig, expires)
 
-	return { signature, address }
+	return { signature: sig, address }
 }

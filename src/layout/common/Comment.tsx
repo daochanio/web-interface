@@ -8,10 +8,10 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { getVoteValue, VoteType } from '../../common/constants'
-import { getItem, setItem } from '../../common/storage'
 import { useState, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { ConnectController } from './ConnectController'
+import { getCommentVoteType, setCommentVoteType } from '../../common/storage'
 
 export function CommentComponent({ comment }: { comment: Comment }) {
 	return (
@@ -128,7 +128,7 @@ function VoteComponent({
 		mutationFn: createCommentVote,
 		onSuccess: () => {
 			const { pendingVoteType, pendingVotes } = state
-			if (pendingVoteType === undefined || pendingVotes === undefined) {
+			if (pendingVoteType === undefined || pendingVotes === undefined || !address) {
 				return
 			}
 
@@ -158,7 +158,7 @@ function VoteComponent({
 				}
 			})
 
-			setItem('comment.vote', `${address}.${commentId}`, pendingVoteType) // cache the vote
+			setCommentVoteType(address, commentId, pendingVoteType) // cache the vote
 			dispatch({ type: 'ACCEPT_PENDING' })
 		},
 		onError: (error) => {
@@ -177,7 +177,7 @@ function VoteComponent({
 			return
 		}
 		// check local storage for the user's vote on mount/address change
-		const cachedVoteType = getItem('comment.vote', `${address}.${commentId}`) as VoteType | undefined
+		const cachedVoteType = getCommentVoteType(address, commentId)
 		dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
 	}, [address, commentId])
 

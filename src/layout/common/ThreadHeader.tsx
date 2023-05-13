@@ -9,8 +9,8 @@ import { useIntl } from 'react-intl'
 import { useAccount, useSigner } from 'wagmi'
 import { createThreadVote } from '../../common/api'
 import { getVoteValue, VoteType } from '../../common/constants'
-import { getItem, setItem } from '../../common/storage'
 import { ConnectController } from './ConnectController'
+import { getThreadVoteType, setThreadVoteType } from '../../common/storage'
 
 export function ThreadHeader({ thread: { id, title, image, content, votes } }: { thread: Thread }) {
 	return (
@@ -91,7 +91,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 		mutationFn: createThreadVote,
 		onSuccess: () => {
 			const { pendingVoteType, pendingVotes } = state
-			if (pendingVoteType === undefined || pendingVotes === undefined) {
+			if (pendingVoteType === undefined || pendingVotes === undefined || !address) {
 				return
 			}
 
@@ -133,7 +133,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 				}
 			})
 
-			setItem('thread.vote', `${address}.${threadId}`, pendingVoteType) // cache the vote
+			setThreadVoteType(address, threadId, pendingVoteType) // cache the vote
 			dispatch({ type: 'ACCEPT_PENDING' })
 		},
 		onError: (error) => {
@@ -152,10 +152,8 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 			return
 		}
 		// check local storage for the user's vote on mount/address change
-		const cachedVoteType = getItem('thread.vote', `${address}.${threadId}`) as VoteType | undefined
-		if (cachedVoteType) {
-			dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
-		}
+		const cachedVoteType = getThreadVoteType(address, threadId)
+		dispatch({ type: 'SET_ACTIVE_TYPE', payload: cachedVoteType })
 	}, [address, threadId])
 
 	// set pending data and asynchronously update the vote
