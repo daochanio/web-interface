@@ -9,6 +9,7 @@ import About from '../../layout/about'
 import Trending from '../../layout/trending'
 import Thread from '../../layout/thread'
 import NotFound from '../../layout/notFound'
+import { BackButton } from './BackButton'
 
 const router = createBrowserRouter([
 	{
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
 			{
 				path: Routes.THREAD,
 				element: (
-					<LayoutWrapper>
+					<LayoutWrapper subnav>
 						<Thread />
 					</LayoutWrapper>
 				),
@@ -67,11 +68,18 @@ export default function RouterProviderWrapper() {
 	return <RouterProvider router={router} />
 }
 
-function LayoutWrapper({ children }: { children: ReactNode }) {
+function LayoutWrapper({ children, subnav }: { children: ReactNode; subnav?: boolean }) {
 	return (
-		<Container maxW="container.lg">
-			<Box mt="15vh" />
-			<ErrorBoundary>{children}</ErrorBoundary>
-		</Container>
+		<>
+			{subnav && (
+				<Box mt={3} ml={1}>
+					<BackButton />
+				</Box>
+			)}
+			<Container maxW="container.lg">
+				<Box mt="15vh" />
+				<ErrorBoundary>{children}</ErrorBoundary>
+			</Container>
+		</>
 	)
 }
