@@ -15,7 +15,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useSigner } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { createThread } from '../../common/api'
 
 // TODO:
@@ -26,7 +26,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 	const [image, setImage] = useState<File>()
-	const { data: signer } = useSigner()
+	const { data: walletClient } = useWalletClient()
 	const toast = useToast()
 
 	const { mutate, isLoading } = useMutation({
@@ -96,7 +96,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 					{!title || !content || !image ? (
 						<Button isDisabled>{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}</Button>
 					) : (
-						<Button isLoading={isLoading} onClick={() => mutate({ title, content, image, signer })}>
+						<Button isLoading={isLoading} onClick={() => mutate({ title, content, image, walletClient })}>
 							{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}
 						</Button>
 					)}

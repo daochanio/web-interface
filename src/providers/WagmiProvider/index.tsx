@@ -1,12 +1,13 @@
-import { WagmiConfig, createClient, configureChains } from 'wagmi'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { arbitrum, arbitrumGoerli } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
+import { createPublicClient, http } from 'viem'
 
-const { chains, provider } = configureChains(
+const { chains } = configureChains(
 	[import.meta.env.DEV ? arbitrumGoerli : arbitrum],
 	[alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_API_KEY ?? '' })]
 )
@@ -38,14 +39,17 @@ const injectedConnector = new InjectedConnector({
 	},
 })
 
-const client = createClient({
+const config = createConfig({
 	autoConnect: true,
 	connectors: [walletConnectConnector, metaMaskConnector, coinbaseWalletConnector, injectedConnector],
-	provider,
+	publicClient: createPublicClient({
+		chain: import.meta.env.DEV ? arbitrumGoerli : arbitrum,
+		transport: http(),
+	}),
 })
 
 function WagmiProvider({ children }: { children: React.ReactNode }) {
-	return <WagmiConfig client={client}>{children}</WagmiConfig>
+	return <WagmiConfig config={config}>{children}</WagmiConfig>
 }
 
 export default WagmiProvider

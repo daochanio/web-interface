@@ -6,7 +6,7 @@ import { useEffect, useReducer } from 'react'
 import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { useIntl } from 'react-intl'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import { createThreadVote } from '../../common/api'
 import { getVoteValue, VoteType } from '../../common/constants'
 import { ConnectController } from './ConnectController'
@@ -83,7 +83,7 @@ function reducer(state: State, action: { type: string; payload?: VoteType }): St
 function VoteComponent({ threadId, count, isDisabled }: { threadId: string; count: number; isDisabled: boolean }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { data: signer } = useSigner()
+	const { data: walletClient } = useWalletClient()
 	const { address } = useAccount()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
@@ -165,7 +165,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 		}
 		const newVoteType = state.activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
 		dispatch({ type: 'SET_PENDING', payload: newVoteType })
-		mutate({ threadId, signer, voteType: newVoteType })
+		mutate({ threadId, walletClient, voteType: newVoteType })
 	}
 
 	// optimistically take the pending data if present

@@ -16,7 +16,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
-import { useSigner } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { APIResponse, Comment, createComment } from '../../common/api'
 
 // TODO:
@@ -35,7 +35,7 @@ export function CreateCommentModal({
 	const { threadId } = useParams()
 	const [content, setContent] = useState('')
 	const [image, setImage] = useState<File>()
-	const { data: signer } = useSigner()
+	const { data: walletClient } = useWalletClient()
 	const toast = useToast()
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -122,7 +122,7 @@ export function CreateCommentModal({
 					) : (
 						<Button
 							isLoading={isLoading}
-							onClick={() => mutate({ threadId, content, image, signer, repliedToCommentId })}
+							onClick={() => mutate({ threadId, content, image, walletClient, repliedToCommentId })}
 						>
 							{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}
 						</Button>
