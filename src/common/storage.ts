@@ -16,7 +16,7 @@ export function setSignature(address: string, signature: string, expires: number
 	setItem('signature', address, JSON.stringify({ signature, expires }))
 }
 
-export function discardSignature(address: string) {
+export function clearSignature(address: string) {
 	setItem('signature', address, '')
 }
 
