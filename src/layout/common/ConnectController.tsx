@@ -1,15 +1,15 @@
 import { Box, Tooltip } from '@chakra-ui/react'
 import { Children, cloneElement } from 'react'
 import { useIntl } from 'react-intl'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
 // wrapps the children with a tooltip and a disabled prop
 // indicating if the user has connected their wallet or not
 export function ConnectController({ children }: { children: React.ReactElement | React.ReactElement[] }) {
 	const intl = useIntl()
-	const { data: signer } = useSigner()
+	const { data: walletClient } = useWalletClient()
 	const { address, isConnected } = useAccount()
-	const isDisabled = !signer || !isConnected || !address
+	const isDisabled = !walletClient || !isConnected || !address
 
 	return (
 		<Tooltip

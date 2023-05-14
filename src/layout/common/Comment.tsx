@@ -1,6 +1,6 @@
 import { Button, Image } from '@chakra-ui/react'
 import { APIResponse, Comment, createCommentVote } from '../../common/api'
-import { useSigner, useAccount } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import { RxChatBubble } from 'react-icons/rx'
 import { CreateCommentModal } from '../common/CreateCommentModal'
 import { Icon, IconButton, useToast } from '@chakra-ui/react'
@@ -120,7 +120,7 @@ function VoteComponent({
 }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { data: signer } = useSigner()
+	const { data: walletClient } = useWalletClient()
 	const { address } = useAccount()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
@@ -190,7 +190,7 @@ function VoteComponent({
 		}
 		const newVoteType = state.activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
 		dispatch({ type: 'SET_PENDING', payload: newVoteType })
-		mutate({ threadId, commentId, signer, voteType: newVoteType })
+		mutate({ threadId, commentId, walletClient, voteType: newVoteType })
 	}
 
 	// optimistically take the pending data if present

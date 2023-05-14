@@ -27,7 +27,8 @@
     "react-icons": "^4.8.0",
     "react-intl": "^6.3.2",
     "react-router-dom": "^6.10.0",
-    "wagmi": "^0.12.10"
+    "viem": "^0.3.24",
+    "wagmi": "^1.0.0-next.9"
   },
   "devDependencies": {
     "@formatjs/cli": "^6.0.4",

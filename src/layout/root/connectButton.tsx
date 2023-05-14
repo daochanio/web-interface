@@ -35,8 +35,8 @@ export default function ConnectButton() {
 			if (!connector) {
 				throw new Error('No connector provided')
 			}
-			const signer = await connector.getSigner()
-			return await signMessage({ signer })
+			const walletClient = await connector.getWalletClient()
+			return await signMessage({ walletClient })
 		},
 		onSuccess: ({ cached }) => {
 			if (cached) {

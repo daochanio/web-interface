@@ -1,4 +1,4 @@
-import { Signer, FetchSignerResult } from '@wagmi/core'
+import { GetWalletClientResult } from '@wagmi/core'
 import { VoteType } from './constants'
 import { getSignature, setSignature } from './storage'
 
@@ -85,29 +85,29 @@ export async function getThreads({ limit }: { limit: number }) {
 export async function createThread({
 	title,
 	content,
-	signer,
+	walletClient,
 	image,
 }: {
 	title: string
 	content: string
 	image: File
-	signer?: FetchSignerResult<Signer>
+	walletClient?: GetWalletClientResult
 }) {
 	const {
 		data: { fileName: imageFileName },
-	} = await uploadImage({ image, signer })
+	} = await uploadImage({ image, walletClient })
 
 	return api<Thread>('/threads', {
 		method: 'POST',
 		body: JSON.stringify({ title, content, imageFileName }),
-		signer,
+		walletClient,
 	})
 }
 
 export async function createComment({
 	threadId,
 	content,
-	signer,
+	walletClient,
 	image,
 	repliedToCommentId,
 }: {
@@ -115,42 +115,42 @@ export async function createComment({
 	content: string
 	image: File
 	repliedToCommentId?: string
-	signer?: FetchSignerResult<Signer>
+	walletClient?: GetWalletClientResult
 }) {
 	const {
 		data: { fileName: imageFileName },
-	} = await uploadImage({ image, signer })
+	} = await uploadImage({ image, walletClient })
 
 	return api<Comment>(`/threads/${threadId}/comments`, {
 		method: 'POST',
 		body: JSON.stringify({ threadId, content, imageFileName, repliedToCommentId }),
-		signer,
+		walletClient,
 	})
 }
 
-export async function uploadImage({ image, signer }: { image: File; signer?: FetchSignerResult<Signer> }) {
+export async function uploadImage({ image, walletClient }: { image: File; walletClient?: GetWalletClientResult }) {
 	const formData = new FormData()
 	formData.append('image', image)
 
 	return api<UploadImageResponse>('/images', {
 		method: 'POST',
 		body: formData,
-		signer,
+		walletClient,
 	})
 }
 
 export async function createThreadVote({
 	threadId,
 	voteType,
-	signer,
+	walletClient,
 }: {
 	threadId: string
 	voteType: VoteType
-	signer?: FetchSignerResult<Signer>
+	walletClient?: GetWalletClientResult
 }) {
 	return api<Thread>(`/threads/${threadId}/votes/${voteType}`, {
 		method: 'PUT',
-		signer,
+		walletClient,
 	})
 }
 
@@ -158,16 +158,16 @@ export async function createCommentVote({
 	threadId,
 	commentId,
 	voteType,
-	signer,
+	walletClient,
 }: {
 	threadId: string
 	commentId: string
 	voteType: VoteType
-	signer?: FetchSignerResult<Signer>
+	walletClient?: GetWalletClientResult
 }) {
 	return api<Comment>(`/threads/${threadId}/comments/${commentId}/votes/${voteType}`, {
 		method: 'PUT',
-		signer,
+		walletClient,
 	})
 }
 
@@ -179,8 +179,8 @@ async function api<T>(
 		method,
 		body,
 		queryParams,
-		signer,
-	}: { method: string; body?: BodyInit; queryParams?: QueryParam[]; signer?: FetchSignerResult<Signer> }
+		walletClient,
+	}: { method: string; body?: BodyInit; queryParams?: QueryParam[]; walletClient?: GetWalletClientResult }
 ): Promise<APIResponse<T>> {
 	const options: RequestInit = {
 		method,
@@ -188,8 +188,8 @@ async function api<T>(
 	if (body) {
 		options.body = body
 	}
-	if (signer) {
-		const { signature, address } = await signMessage({ signer })
+	if (walletClient) {
+		const { signature, address } = await signMessage({ walletClient })
 		options.headers = {
 			Authorization: `Bearer ${signature}`,
 			'X-Address': address,
@@ -216,13 +216,17 @@ async function api<T>(
 }
 
 export async function signMessage({
-	signer,
+	walletClient,
 	noCache,
 }: {
-	signer: Signer
+	walletClient: GetWalletClientResult
 	noCache?: boolean
 }): Promise<{ signature: string; address: string; cached: boolean }> {
-	const address = await signer.getAddress()
+	if (!walletClient) {
+		throw new Error('No wallet client')
+	}
+
+	const address = walletClient.account.address
 	const signature = getSignature(address)
 
 	if (!noCache && signature) {
@@ -242,7 +246,7 @@ export async function signMessage({
 		data: { message, expires },
 	}: APIResponse<Challenge> = await response.json()
 
-	const sig = await signer.signMessage(message)
+	const sig = await walletClient.signMessage({ message })
 
 	setSignature(address, sig, expires)
 
