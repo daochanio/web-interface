@@ -1,7 +1,7 @@
-import { Button, Flex, LinkBox, LinkOverlay, List, ListItem, Spinner, Icon } from '@chakra-ui/react'
+import { Button, Flex, LinkBox, LinkOverlay, List, ListItem, Spinner, Icon, Link } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { getThreads } from '../../common/api'
 import { ThreadHeader } from '../common/ThreadHeader'
 import Unexpected from '../unexpected'
@@ -20,6 +20,7 @@ export default function Home() {
 		getNextPageParam: () => 0,
 		staleTime: Infinity,
 	})
+	const navigate = useNavigate()
 
 	if (isLoading) {
 		return <Spinner />
@@ -40,11 +41,8 @@ export default function Home() {
 					<Fragment key={i}>
 						{group.data.map((thread) => (
 							<ListItem key={thread.id}>
-								<LinkBox _hover={{ bg: 'gray.700' }}>
-									<LinkOverlay as={RouterLink} to={`/threads/${thread.id}`}>
-										<ThreadHeader thread={thread} />
-									</LinkOverlay>
-								</LinkBox>
+								<ThreadHeader thread={thread} />
+								<Button onClick={() => navigate(`/threads/${thread.id}`)}>View</Button>
 							</ListItem>
 						))}
 					</Fragment>
