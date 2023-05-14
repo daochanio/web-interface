@@ -19,16 +19,49 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Connector, useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import { Connector, useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
 import { useMutation } from '@tanstack/react-query'
 import useDisplayAddress from '../../hooks/useDisplayAddress'
 import { signMessage } from '../../common/api'
-import { discardSignature } from '../../common/storage'
+import { clearSignature } from '../../common/storage'
 
 export default function ConnectButton() {
-	const { isConnected } = useAccount()
+	const intl = useIntl()
+	const toast = useToast()
+	const { mutate } = useMutation({
+		mutationFn: async ({ connector }: { connector: Connector | undefined }) => {
+			if (!connector) {
+				throw new Error('No connector provided')
+			}
+			const signer = await connector.getSigner()
+			return await signMessage({ signer })
+		},
+		onSuccess: ({ cached }) => {
+			if (cached) {
+				return
+			}
+			toast({
+				title: intl.formatMessage({ id: 'success-signin', defaultMessage: 'Successfully signed in!' }),
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+			})
+		},
+		onError: (error) => {
+			toast({
+				title: intl.formatMessage({ id: 'error-signin', defaultMessage: 'Failed to sign in' }),
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+			})
+			console.error(error)
+		},
+	})
+	const { isConnected } = useAccount({
+		onConnect: ({ connector }) => mutate({ connector }),
+	})
 
 	if (isConnected) {
 		return <ProfileButton />
@@ -40,16 +73,6 @@ export default function ConnectButton() {
 function ProfileButton() {
 	const { address } = useAccount()
 	const shortAddress = useDisplayAddress(address)
-	const { data: signer } = useSigner()
-	const { mutate } = useMutation({
-		mutationFn: async () => {
-			if (signer) {
-				await signMessage({ signer })
-			}
-		},
-	})
-
-	useEffect(() => mutate(), [address, mutate, signer])
 
 	return (
 		<Menu>
@@ -97,7 +120,7 @@ function SwitchNetworkMenuItem() {
 					defaultMessage: 'Successfully switched network!',
 				}),
 				status: 'success',
-				duration: 9000,
+				duration: 5000,
 				isClosable: true,
 			})
 		},
@@ -105,7 +128,7 @@ function SwitchNetworkMenuItem() {
 			toast({
 				title: intl.formatMessage({ id: 'error-switching-network', defaultMessage: 'Error switching network' }),
 				status: 'error',
-				duration: 9000,
+				duration: 5000,
 				isClosable: true,
 			})
 			console.error(error)
@@ -139,14 +162,35 @@ function SwitchNetworkMenuItem() {
 
 function DisconnectMenuItem() {
 	const intl = useIntl()
+	const toast = useToast()
 	const { address } = useAccount()
 	const { disconnectAsync } = useDisconnect()
 	const { mutate } = useMutation({
 		mutationFn: async () => {
 			await disconnectAsync()
 			if (address) {
-				discardSignature(address)
+				clearSignature(address)
 			}
+		},
+		onSuccess: () => {
+			toast({
+				title: intl.formatMessage({
+					id: 'success-disconnect',
+					defaultMessage: 'Successfully disconnected wallet!',
+				}),
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+			})
+		},
+		onError: (error) => {
+			toast({
+				title: intl.formatMessage({ id: 'error-disconnect', defaultMessage: 'Error disconnecting wallet' }),
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+			})
+			console.error(error)
 		},
 	})
 

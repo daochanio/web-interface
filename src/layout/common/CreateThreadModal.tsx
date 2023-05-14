@@ -39,7 +39,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 			toast({
 				title: intl.formatMessage({ id: 'error-creating-thread', defaultMessage: 'Error creating thread' }),
 				status: 'error',
-				duration: 9000,
+				duration: 5000,
 				isClosable: true,
 			})
 			console.error(error)
@@ -81,7 +81,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 											defaultMessage: 'Invalid image provided',
 										}),
 										status: 'error',
-										duration: 9000,
+										duration: 5000,
 										isClosable: true,
 									})
 									return

@@ -221,12 +221,12 @@ export async function signMessage({
 }: {
 	signer: Signer
 	noCache?: boolean
-}): Promise<{ signature: string; address: string }> {
+}): Promise<{ signature: string; address: string; cached: boolean }> {
 	const address = await signer.getAddress()
 	const signature = getSignature(address)
 
 	if (!noCache && signature) {
-		return { signature, address }
+		return { signature, address, cached: true }
 	}
 
 	const response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin`, {
@@ -246,5 +246,5 @@ export async function signMessage({
 
 	setSignature(address, sig, expires)
 
-	return { signature: sig, address }
+	return { signature: sig, address, cached: false }
 }

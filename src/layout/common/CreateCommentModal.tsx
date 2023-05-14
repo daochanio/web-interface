@@ -68,7 +68,7 @@ export function CreateCommentModal({
 			toast({
 				title: intl.formatMessage({ id: 'error-creating-comment', defaultMessage: 'Error creating comment' }),
 				status: 'error',
-				duration: 9000,
+				duration: 5000,
 				isClosable: true,
 			})
 			console.error(error)
@@ -105,7 +105,7 @@ export function CreateCommentModal({
 											defaultMessage: 'Invalid image provided',
 										}),
 										status: 'error',
-										duration: 9000,
+										duration: 5000,
 										isClosable: true,
 									})
 									return
