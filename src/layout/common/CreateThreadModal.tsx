@@ -12,12 +12,12 @@ import {
 	FormControl,
 	Input,
 } from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useWalletClient } from 'wagmi'
-import { createThread } from '../../common/api'
+import { APIResponse, createThread, Thread } from '../../common/api'
 
 // TODO:
 // - full form validation
@@ -28,14 +28,27 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 	const [content, setContent] = useState('')
 	const [image, setImage] = useState<File>()
 	const { data: walletClient } = useWalletClient()
+	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const toast = useToast()
 
 	const { mutate, isLoading } = useMutation({
 		mutationFn: createThread,
-		onSuccess: ({ data: { id } }) => {
+		onSuccess: ({ data }) => {
+			queryClient.setQueryData(['threads'], (oldData: InfiniteData<APIResponse<Thread[]>> | undefined) => {
+				if (!oldData) {
+					return undefined
+				}
+				const newPageZeroData = [data, ...oldData.pages[0].data]
+				const newPageZero = { data: newPageZeroData, nextPage: oldData.pages[0].nextPage }
+				oldData.pages.splice(0, 1)
+				return {
+					pages: [newPageZero, ...oldData.pages],
+					pageParams: [...oldData.pageParams],
+				}
+			})
 			close()
-			navigate(`/threads/${id}`)
+			navigate(`/threads/${data.id}`)
 		},
 		onError: (error) => {
 			toast({
