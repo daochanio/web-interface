@@ -15,6 +15,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { useWalletClient } from 'wagmi'
 import { createThread } from '../../common/api'
 
@@ -27,13 +28,14 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 	const [content, setContent] = useState('')
 	const [image, setImage] = useState<File>()
 	const { data: walletClient } = useWalletClient()
+	const navigate = useNavigate()
 	const toast = useToast()
 
 	const { mutate, isLoading } = useMutation({
 		mutationFn: createThread,
 		onSuccess: ({ data: { id } }) => {
 			close()
-			window.open(`/threads/${id}`, '_blank')
+			navigate(`/threads/${id}`)
 		},
 		onError: (error) => {
 			toast({
