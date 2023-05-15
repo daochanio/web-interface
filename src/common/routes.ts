@@ -1,6 +1,6 @@
 export enum Routes {
 	HOME = '/',
 	ABOUT = '/about',
-	TRENDING = '/trending',
+	GOVERNANCE = '/governance',
 	THREAD = '/threads/:threadId',
 }

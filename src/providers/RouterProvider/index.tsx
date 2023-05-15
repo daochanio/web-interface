@@ -3,10 +3,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Box, Container } from '@chakra-ui/react'
 import { Routes } from '../../common/routes'
 import Root from '../../layout/root'
-import Home from '../../layout/home'
+import Threads from '../../layout/threads'
 import ErrorBoundary from './ErrorBoundary'
 import About from '../../layout/about'
-import Trending from '../../layout/trending'
+import Governance from '../../layout/governance'
 import Thread from '../../layout/thread'
 import NotFound from '../../layout/notFound'
 import { BackButton } from './BackButton'
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
 				path: Routes.HOME,
 				element: (
 					<LayoutWrapper>
-						<Home />
+						<Threads />
 					</LayoutWrapper>
 				),
 			},
@@ -37,10 +37,10 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: Routes.TRENDING,
+				path: Routes.GOVERNANCE,
 				element: (
 					<LayoutWrapper>
-						<Trending />
+						<Governance />
 					</LayoutWrapper>
 				),
 			},
