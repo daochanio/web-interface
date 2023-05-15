@@ -17,7 +17,7 @@ import {
 	Img,
 	Link,
 } from '@chakra-ui/react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from 'react-icons/md'
 import ConnectButton from './connectButton'
 import { Routes } from '../../common/routes'
@@ -25,10 +25,9 @@ import { Routes } from '../../common/routes'
 interface NavItem {
 	label: string
 	subLabel?: string
-	children?: Array<NavItem>
+	children?: NavItem[]
 	href: string
 	isExternal?: boolean
-	isMobileOnly?: boolean
 }
 
 function Navbar() {
@@ -36,19 +35,18 @@ function Navbar() {
 	const { isOpen, onToggle } = useDisclosure()
 	const isMobile = useBreakpointValue({ base: true, md: false })
 
-	const NAV_ITEMS: Array<NavItem> = [
+	const NAV_ITEMS: NavItem[] = [
 		{
-			label: intl.formatMessage({ id: 'home', defaultMessage: 'Home' }),
+			label: intl.formatMessage({ id: 'social', defaultMessage: 'Social' }),
 			href: Routes.HOME,
-			isMobileOnly: true,
 		},
 		{
-			label: intl.formatMessage({ id: 'trending', defaultMessage: 'Trending' }),
-			href: Routes.TRENDING,
+			label: intl.formatMessage({ id: 'governance', defaultMessage: 'Governance' }),
+			href: Routes.GOVERNANCE,
 		},
 		{
 			label: intl.formatMessage({ id: 'more', defaultMessage: 'More' }),
-			href: '',
+			href: '#',
 			children: [
 				{
 					label: intl.formatMessage({ id: 'about', defaultMessage: 'About' }),
@@ -129,62 +127,62 @@ const MobileLogo = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => voi
 }
 
 const DesktopNav = ({ navItems }: { navItems: NavItem[] }) => {
+	const { pathname } = useLocation()
 	return (
 		<Stack direction={'row'} spacing={4} ml={10} alignItems="center">
-			{navItems
-				.filter((navItem) => !navItem.isMobileOnly)
-				.map((navItem) => (
-					<Box key={navItem.label}>
-						<Popover trigger={'hover'} placement={'bottom-start'}>
-							<PopoverTrigger>
-								{!navItem.children ? (
-									<Link
-										as={RouterLink}
-										p={2}
-										to={navItem.href ?? ''}
-										fontSize={'md'}
-										fontWeight={500}
-										color={'gray.200'}
-										_hover={{
-											textDecoration: 'none',
-											color: 'brand.200',
-										}}
-									>
-										{navItem.label}
-									</Link>
-								) : (
-									<Text
-										as="button"
-										p={2}
-										fontSize={'md'}
-										fontWeight={500}
-										color={'gray.200'}
-										_hover={{
-											textDecoration: 'none',
-											color: 'brand.200',
-										}}
-									>
-										{navItem.label}
-									</Text>
-								)}
-							</PopoverTrigger>
-							{navItem.children && (
-								<PopoverContent border={0} boxShadow={'xl'} bg={'gray.800'} p={4} rounded={'xl'} minW={'sm'}>
-									<Stack>
-										{navItem.children.map((child) => (
-											<DesktopSubNav key={child.label} {...child} />
-										))}
-									</Stack>
-								</PopoverContent>
+			{navItems.map((navItem) => (
+				<Box key={navItem.label}>
+					<Popover trigger={'hover'} placement={'bottom-start'}>
+						<PopoverTrigger>
+							{!navItem.children ? (
+								<Link
+									as={RouterLink}
+									p={2}
+									to={navItem.href ?? ''}
+									fontSize={'md'}
+									fontWeight={500}
+									color={pathname === navItem.href ? 'brand.200' : 'gray.200'}
+									_hover={{
+										textDecoration: 'none',
+										color: 'brand.200',
+									}}
+								>
+									{navItem.label}
+								</Link>
+							) : (
+								<Text
+									as="button"
+									p={2}
+									fontSize={'md'}
+									fontWeight={500}
+									color={navItem.children?.some((child) => pathname === child.href) ? 'brand.200' : 'gray.200'}
+									_hover={{
+										textDecoration: 'none',
+										color: 'brand.200',
+									}}
+								>
+									{navItem.label}
+								</Text>
 							)}
-						</Popover>
-					</Box>
-				))}
+						</PopoverTrigger>
+						{navItem.children && (
+							<PopoverContent border={0} boxShadow={'xl'} bg={'gray.800'} p={4} rounded={'xl'} minW={'sm'}>
+								<Stack>
+									{navItem.children.map((child) => (
+										<DesktopSubNav key={child.label} {...child} />
+									))}
+								</Stack>
+							</PopoverContent>
+						)}
+					</Popover>
+				</Box>
+			))}
 		</Stack>
 	)
 }
 
 const DesktopSubNav = ({ label, href, subLabel, isExternal }: NavItem) => {
+	const { pathname } = useLocation()
 	return (
 		<Link
 			as={RouterLink}
@@ -193,6 +191,7 @@ const DesktopSubNav = ({ label, href, subLabel, isExternal }: NavItem) => {
 			display="block"
 			p={2}
 			rounded="md"
+			color={pathname === href ? 'brand.200' : 'gray.200'}
 			_hover={{ bg: 'gray.900' }}
 			to={href}
 		>
@@ -205,7 +204,7 @@ const DesktopLinkBody = ({ label, subLabel }: { label: string; subLabel: string 
 	return (
 		<Stack direction={'row'} align={'center'}>
 			<Box>
-				<Text transition={'all .3s ease'} _groupHover={{ color: 'brand.400' }} fontWeight={500}>
+				<Text transition={'all .3s ease'} _groupHover={{ color: 'brand.200' }} fontWeight={500}>
 					{label}
 				</Text>
 				<Text fontSize={'sm'}>{subLabel}</Text>
@@ -219,7 +218,7 @@ const DesktopLinkBody = ({ label, subLabel }: { label: string; subLabel: string 
 				align={'center'}
 				flex={1}
 			>
-				<Icon color={'brand.400'} w={5} h={5} as={MdKeyboardArrowRight} />
+				<Icon color={'brand.200'} w={5} h={5} as={MdKeyboardArrowRight} />
 			</Flex>
 		</Stack>
 	)
@@ -237,7 +236,7 @@ const MobileNav = ({ navItems, onToggleMenu }: { navItems: NavItem[]; onToggleMe
 
 const MobileNavItem = ({ label, children, href, onToggleMenu }: NavItem & { onToggleMenu: () => void }) => {
 	const { isOpen, onToggle } = useDisclosure()
-
+	const { pathname } = useLocation()
 	return (
 		<Stack
 			spacing={4}
@@ -251,6 +250,7 @@ const MobileNavItem = ({ label, children, href, onToggleMenu }: NavItem & { onTo
 		>
 			<Flex py={2} as={RouterLink} to={href} justify={'space-between'} align={'center'}>
 				<Text
+					color={pathname === href || children?.some((child) => pathname === child.href) ? 'brand.200' : 'gray.200'}
 					_hover={{
 						textDecoration: 'none',
 						color: 'brand.200',
@@ -280,10 +280,10 @@ const MobileNavItem = ({ label, children, href, onToggleMenu }: NavItem & { onTo
 									to={href}
 									py={2}
 									onClick={onToggleMenu}
-									color="whiteAlpha.900"
+									color={pathname === href ? 'brand.200' : 'gray.200'}
 									_hover={{
 										textDecoration: 'none',
-										color: 'brand.400',
+										color: 'brand.200',
 									}}
 								>
 									{label}

@@ -1,7 +1,7 @@
 export default function Trending() {
 	return (
 		<div>
-			<p>Hello Trending Page</p>
+			<p>Hello Governance Page</p>
 		</div>
 	)
 }
