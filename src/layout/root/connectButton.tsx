@@ -25,7 +25,7 @@ import { Connector, useAccount, useConnect, useDisconnect, useNetwork, useSwitch
 import { useMutation } from '@tanstack/react-query'
 import useDisplayAddress from '../../hooks/useDisplayAddress'
 import { signMessage } from '../../common/api'
-import { clearSignature } from '../../common/storage'
+import { clearToken } from '../../common/storage'
 
 export default function ConnectButton() {
 	const intl = useIntl()
@@ -169,7 +169,7 @@ function DisconnectMenuItem() {
 		mutationFn: async () => {
 			await disconnectAsync()
 			if (address) {
-				clearSignature(address)
+				clearToken(address)
 			}
 		},
 		onSuccess: () => {
