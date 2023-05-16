@@ -193,7 +193,7 @@ async function api<T>(
 		options.body = body
 	}
 	if (walletClient) {
-		const { token, address } = await signMessage({ walletClient })
+		const { token, address } = await signin({ walletClient })
 		options.headers = {
 			Authorization: `Bearer ${token}`,
 			'X-Address': address,
@@ -219,7 +219,7 @@ async function api<T>(
 	return {} as APIResponse<T>
 }
 
-export async function signMessage({
+export async function signin({
 	walletClient,
 	noCache,
 }: {
