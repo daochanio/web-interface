@@ -24,8 +24,8 @@ import { useIntl } from 'react-intl'
 import { Connector, useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
 import { useMutation } from '@tanstack/react-query'
 import useDisplayAddress from '../../hooks/useDisplayAddress'
-import { signMessage } from '../../common/api'
-import { clearSignature } from '../../common/storage'
+import { signin } from '../../common/api'
+import { clearToken } from '../../common/storage'
 
 export default function ConnectButton() {
 	const intl = useIntl()
@@ -36,7 +36,7 @@ export default function ConnectButton() {
 				throw new Error('No connector provided')
 			}
 			const walletClient = await connector.getWalletClient()
-			return await signMessage({ walletClient })
+			return await signin({ walletClient })
 		},
 		onSuccess: ({ cached }) => {
 			if (cached) {
@@ -169,7 +169,7 @@ function DisconnectMenuItem() {
 		mutationFn: async () => {
 			await disconnectAsync()
 			if (address) {
-				clearSignature(address)
+				clearToken(address)
 			}
 		},
 		onSuccess: () => {

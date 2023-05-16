@@ -1,6 +1,6 @@
 import { GetWalletClientResult } from '@wagmi/core'
 import { VoteType } from './constants'
-import { getSignature, setSignature } from './storage'
+import { getToken, setToken } from './storage'
 
 export type Thread = {
 	id: string
@@ -37,6 +37,10 @@ export type Comment = {
 export type Challenge = {
 	message: string
 	expires: number
+}
+
+export type Token = {
+	token: string
 }
 
 export type UploadImageResponse = {
@@ -189,9 +193,9 @@ async function api<T>(
 		options.body = body
 	}
 	if (walletClient) {
-		const { signature, address } = await signMessage({ walletClient })
+		const { token, address } = await signin({ walletClient })
 		options.headers = {
-			Authorization: `Bearer ${signature}`,
+			Authorization: `Bearer ${token}`,
 			'X-Address': address,
 		}
 	}
@@ -215,27 +219,26 @@ async function api<T>(
 	return {} as APIResponse<T>
 }
 
-export async function signMessage({
+export async function signin({
 	walletClient,
 	noCache,
 }: {
 	walletClient: GetWalletClientResult
 	noCache?: boolean
-}): Promise<{ signature: string; address: string; cached: boolean }> {
+}): Promise<{ token: string; address: string; cached: boolean }> {
 	if (!walletClient) {
 		throw new Error('No wallet client')
 	}
 
 	const address = walletClient.account.address
-	const signature = getSignature(address)
+	const cachedToken = getToken(address)
 
-	if (!noCache && signature) {
-		return { signature, address, cached: true }
+	if (!noCache && cachedToken) {
+		return { token: cachedToken, address, cached: true }
 	}
 
-	const response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin`, {
-		method: 'PUT',
-		body: JSON.stringify({ address }),
+	let response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin/${address}`, {
+		method: 'GET',
 	})
 
 	if (response.status !== 200) {
@@ -243,12 +246,25 @@ export async function signMessage({
 	}
 
 	const {
-		data: { message, expires },
+		data: { message },
 	}: APIResponse<Challenge> = await response.json()
 
-	const sig = await walletClient.signMessage({ message })
+	const signature = await walletClient.signMessage({ message })
 
-	setSignature(address, sig, expires)
+	response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin/${address}`, {
+		method: 'POST',
+		body: JSON.stringify({ signature }),
+	})
 
-	return { signature: sig, address, cached: false }
+	if (response.status !== 200) {
+		throw new Error(`Failed to get challenge ${response.status}`)
+	}
+
+	const {
+		data: { token },
+	}: APIResponse<Token> = await response.json()
+
+	setToken(address, token)
+
+	return { token, address, cached: false }
 }
