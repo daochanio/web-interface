@@ -1,31 +1,21 @@
 import { VoteType } from './constants'
-import jwtDecode from 'jwt-decode'
 
-type claims = {
-	iss: string
-	sub: string
-	iat: number
-	exp: number
-}
-
-export function getToken(address: string): string | undefined {
-	const token = getItem('token', address)
-	if (!token) {
+export function getToken(address: string | undefined): string | undefined {
+	if (!address) {
 		return
 	}
-	const claims = jwtDecode(token) as claims
-	if (claims.exp < Date.now() / 1000) {
+	const token = getItem('token', address)
+	if (!token) {
 		return
 	}
 	return token
 }
 
-export function setToken(address: string, token: string) {
+export function setToken(address: string | undefined, token: string) {
+	if (!address) {
+		return
+	}
 	setItem('token', address, token)
-}
-
-export function clearToken(address: string) {
-	setItem('token', address, '')
 }
 
 export function getCommentVoteType(address: string, commentId: string) {
@@ -45,9 +35,10 @@ export function setThreadVoteType(address: string, threadId: string, voteType: V
 }
 
 function getItem(namespace: string, key: string) {
-	return localStorage.getItem(`daochan:${namespace}:${key}`)
+	return window.localStorage.getItem(`daochan:${namespace}:${key}`)
 }
 
 function setItem(namespace: string, key: string, value: string) {
-	localStorage.setItem(`daochan:${namespace}:${key}`, value)
+	window.localStorage.setItem(`daochan:${namespace}:${key}`, value)
+	window.dispatchEvent(new Event('storage')) // trigger storage event
 }

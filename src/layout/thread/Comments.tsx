@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@chakra-ui/react'
+import { Box, Button, Spinner } from '@chakra-ui/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
@@ -30,9 +30,9 @@ export function Comments({ initialComments, initialPage }: { initialComments?: C
 				data.pages.map((group, i) => (
 					<Fragment key={i}>
 						{group.data.map((comment) => (
-							<Fragment key={comment.id}>
+							<Box key={comment.id} my={5}>
 								<CommentComponent comment={comment} />
-							</Fragment>
+							</Box>
 						))}
 					</Fragment>
 				))}

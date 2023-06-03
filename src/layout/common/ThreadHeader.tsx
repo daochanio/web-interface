@@ -1,4 +1,4 @@
-import { Image } from '@chakra-ui/react'
+import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { APIResponse, Thread } from '../../common/api'
 import { Icon, IconButton, useToast } from '@chakra-ui/react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -6,22 +6,43 @@ import { useEffect, useReducer } from 'react'
 import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { useIntl } from 'react-intl'
-import { useAccount, useWalletClient } from 'wagmi'
 import { createThreadVote } from '../../common/api'
 import { getVoteValue, VoteType } from '../../common/constants'
-import { ConnectController } from './ConnectController'
+import { AuthController } from './AuthController'
 import { getThreadVoteType, setThreadVoteType } from '../../common/storage'
+import useAuth from '../../hooks/useAuth'
+import ProfileDisplay from './ProfileDisplay'
 
-export function ThreadHeader({ thread: { id, title, image, content, votes } }: { thread: Thread }) {
+export function ThreadHeader({ thread: { id, title, image, content, votes, user } }: { thread: Thread }) {
+	const intl = useIntl()
+
 	return (
-		<>
-			<h1>{title}</h1>
-			{image && <Image src={image.url} maxWidth={250} maxHeight={250} />}
-			<p>{content}</p>
-			<ConnectController>
-				<VoteComponent threadId={id} count={votes} isDisabled={true} />
-			</ConnectController>
-		</>
+		<Box border="1px solid gray" borderRadius={5}>
+			<Box margin={3}>
+				<Flex alignItems="center">
+					<h1>{title}</h1>
+					<Flex grow={1} />
+					<ProfileDisplay user={user} />
+				</Flex>
+				<Flex>
+					<Flex grow={1} />
+					<Text fontSize="xs" color="gray.400">
+						{user.reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
+					</Text>
+				</Flex>
+				<Flex>
+					{image && <Image flex={1} m={2} src={image.url} maxWidth={250} maxHeight={250} />}
+					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
+						<Text flex={1} p={3}>
+							{content}
+						</Text>
+					</Box>
+				</Flex>
+				<AuthController>
+					<VoteComponent threadId={id} count={votes} isDisabled={true} />
+				</AuthController>
+			</Box>
+		</Box>
 	)
 }
 
@@ -83,8 +104,7 @@ function reducer(state: State, action: { type: string; payload?: VoteType }): St
 function VoteComponent({ threadId, count, isDisabled }: { threadId: string; count: number; isDisabled: boolean }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { data: walletClient } = useWalletClient()
-	const { address } = useAccount()
+	const { token, address } = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -165,7 +185,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 		}
 		const newVoteType = state.activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
 		dispatch({ type: 'SET_PENDING', payload: newVoteType })
-		mutate({ threadId, walletClient, voteType: newVoteType })
+		mutate({ threadId, token, voteType: newVoteType })
 	}
 
 	// optimistically take the pending data if present

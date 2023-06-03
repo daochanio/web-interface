@@ -9,19 +9,21 @@ import { useState } from 'react'
 import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import { CreateCommentModal } from '../common/CreateCommentModal'
-import { ConnectController } from '../common/ConnectController'
+import { AuthController } from '../common/AuthController'
 
 export const COMMENT_PAGE_SIZE = 10
 
 export default function ThreadPage() {
 	const { threadId } = useParams()
 	const queryClient = useQueryClient()
-	const { data, isLoading, isError } = useQuery({
-		queryKey: ['threads', threadId],
-		queryFn: () => queryFn({ threadId, offset: 0, limit: COMMENT_PAGE_SIZE }),
-		initialData: () => findInitialThread(queryClient, threadId),
-		staleTime: Infinity,
-	})
+	const { data, isLoading, isError } = useQuery(
+		['threads', threadId],
+		() => queryFn({ threadId, offset: 0, limit: COMMENT_PAGE_SIZE }),
+		{
+			initialData: () => findInitialThread(queryClient, threadId),
+			staleTime: Infinity,
+		}
+	)
 
 	if (isLoading) {
 		return <Spinner />
@@ -32,14 +34,14 @@ export default function ThreadPage() {
 	}
 
 	return (
-		<div>
-			<Flex>
+		<>
+			<ThreadHeader thread={data.data} />
+			<Flex my={5}>
 				<Flex grow={1} />
 				<CreateCommentButton />
 			</Flex>
-			<ThreadHeader thread={data.data} />
 			<Comments initialComments={data.data.comments} initialPage={data.nextPage} />
-		</div>
+		</>
 	)
 }
 
@@ -77,14 +79,14 @@ function CreateCommentButton() {
 	const [isOpen, setIsOpen] = useState(false)
 	return (
 		<>
-			<ConnectController>
+			<AuthController>
 				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
 					{intl.formatMessage({
 						id: 'create-a-comment',
 						defaultMessage: 'New Comment',
 					})}
 				</Button>
-			</ConnectController>
+			</AuthController>
 			{isOpen && <CreateCommentModal isOpen={isOpen} close={() => setIsOpen(false)} />}
 		</>
 	)

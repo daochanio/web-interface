@@ -4,7 +4,6 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
 import { createPublicClient, http } from 'viem'
 
 const { chains } = configureChains(
@@ -31,17 +30,9 @@ const coinbaseWalletConnector = new CoinbaseWalletConnector({
 	},
 })
 
-const injectedConnector = new InjectedConnector({
-	chains,
-	options: {
-		name: 'Injected',
-		shimDisconnect: true,
-	},
-})
-
 const config = createConfig({
 	autoConnect: true,
-	connectors: [walletConnectConnector, metaMaskConnector, coinbaseWalletConnector, injectedConnector],
+	connectors: [walletConnectConnector, metaMaskConnector, coinbaseWalletConnector],
 	publicClient: createPublicClient({
 		chain: import.meta.env.DEV ? arbitrumGoerli : arbitrum,
 		transport: http(),

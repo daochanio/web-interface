@@ -16,8 +16,8 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { useWalletClient } from 'wagmi'
 import { APIResponse, createThread, Thread } from '../../common/api'
+import useAuth from '../../hooks/useAuth'
 
 // TODO:
 // - full form validation
@@ -27,7 +27,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 	const [image, setImage] = useState<File>()
-	const { data: walletClient } = useWalletClient()
+	const { token } = useAuth()
 	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const toast = useToast()
@@ -111,7 +111,7 @@ export function CreateThreadModal({ isOpen, close }: { isOpen: boolean; close: (
 					{!title || !content || !image ? (
 						<Button isDisabled>{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}</Button>
 					) : (
-						<Button isLoading={isLoading} onClick={() => mutate({ title, content, image, walletClient })}>
+						<Button isLoading={isLoading} onClick={() => mutate({ title, content, image, token })}>
 							{intl.formatMessage({ id: 'create', defaultMessage: 'Create' })}
 						</Button>
 					)}
