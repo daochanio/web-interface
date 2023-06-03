@@ -1,23 +1,5 @@
 import { VoteType } from './constants'
 
-export function getToken(address: string | undefined): string | undefined {
-	if (!address) {
-		return
-	}
-	const token = getItem('token', address)
-	if (!token) {
-		return
-	}
-	return token
-}
-
-export function setToken(address: string | undefined, token: string) {
-	if (!address) {
-		return
-	}
-	setItem('token', address, token)
-}
-
 export function getCommentVoteType(address: string, commentId: string) {
 	return getItem('comment:vote', `${address}:${commentId}`) as VoteType | undefined
 }
