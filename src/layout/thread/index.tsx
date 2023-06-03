@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import { CreateCommentModal } from '../common/CreateCommentModal'
-import { AuthController } from '../common/AuthController'
+import useAuth from '../../hooks/useAuth'
 
 export const COMMENT_PAGE_SIZE = 10
 
@@ -77,16 +77,18 @@ async function queryFn({ threadId, offset, limit }: { threadId?: string; offset:
 function CreateCommentButton() {
 	const intl = useIntl()
 	const [isOpen, setIsOpen] = useState(false)
+	const { safeInvoke } = useAuth()
 	return (
 		<>
-			<AuthController>
-				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
-					{intl.formatMessage({
-						id: 'create-a-comment',
-						defaultMessage: 'New Comment',
-					})}
-				</Button>
-			</AuthController>
+			<Button
+				rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />}
+				onClick={safeInvoke(() => setIsOpen(true))}
+			>
+				{intl.formatMessage({
+					id: 'create-a-comment',
+					defaultMessage: 'New Comment',
+				})}
+			</Button>
 			{isOpen && <CreateCommentModal isOpen={isOpen} close={() => setIsOpen(false)} />}
 		</>
 	)

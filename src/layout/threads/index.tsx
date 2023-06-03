@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import { CreateThreadModal } from '../common/CreateThreadModal'
-import { AuthController } from '../common/AuthController'
+import useAuth from '../../hooks/useAuth'
 
 const THREAD_PAGE_SIZE = 10
 
@@ -62,17 +62,18 @@ export default function Home() {
 function CreateThreadButton() {
 	const intl = useIntl()
 	const [isOpen, setIsOpen] = useState(false)
-
+	const { safeInvoke } = useAuth()
 	return (
 		<>
-			<AuthController>
-				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
-					{intl.formatMessage({
-						id: 'create-a-thread',
-						defaultMessage: 'New Thread',
-					})}
-				</Button>
-			</AuthController>
+			<Button
+				rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />}
+				onClick={safeInvoke(() => setIsOpen(true))}
+			>
+				{intl.formatMessage({
+					id: 'create-a-thread',
+					defaultMessage: 'New Thread',
+				})}
+			</Button>
 			<CreateThreadModal isOpen={isOpen} close={() => setIsOpen(false)} />
 		</>
 	)

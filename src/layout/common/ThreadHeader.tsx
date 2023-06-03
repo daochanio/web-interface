@@ -8,7 +8,6 @@ import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { useIntl } from 'react-intl'
 import { createThreadVote } from '../../common/api'
 import { getVoteValue, VoteType } from '../../common/constants'
-import { AuthController } from './AuthController'
 import { getThreadVoteType, setThreadVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
@@ -38,9 +37,7 @@ export function ThreadHeader({ thread: { id, title, image, content, votes, user 
 						</Text>
 					</Box>
 				</Flex>
-				<AuthController>
-					<VoteComponent threadId={id} count={votes} isDisabled={true} />
-				</AuthController>
+				<VoteComponent threadId={id} count={votes} />
 			</Box>
 		</Box>
 	)
@@ -101,10 +98,10 @@ function reducer(state: State, action: { type: string; payload?: VoteType }): St
 	}
 }
 
-function VoteComponent({ threadId, count, isDisabled }: { threadId: string; count: number; isDisabled: boolean }) {
+function VoteComponent({ threadId, count }: { threadId: string; count: number }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { token, address } = useAuth()
+	const { token, address, safeInvoke } = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -204,8 +201,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 						<Icon as={BiUpvote} w={4} h={4} color="brand.200" />
 					)
 				}
-				isDisabled={isDisabled}
-				onClick={() => onClick(VoteType.Upvote)}
+				onClick={safeInvoke(() => onClick(VoteType.Upvote))}
 				variant="ghost"
 				bg="gray.900"
 				_hover={{ bg: 'gray.800' }}
@@ -215,7 +211,6 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 			{votes}
 			<IconButton
 				aria-label="downvote"
-				isDisabled={isDisabled}
 				icon={
 					voteType === VoteType.Downvote ? (
 						<Icon as={GoArrowDown} w={5} h={5} color="brand.200" />
@@ -223,7 +218,7 @@ function VoteComponent({ threadId, count, isDisabled }: { threadId: string; coun
 						<Icon as={BiDownvote} w={4} h={4} color="brand.200" />
 					)
 				}
-				onClick={() => onClick(VoteType.Downvote)}
+				onClick={safeInvoke(() => onClick(VoteType.Downvote))}
 				variant="ghost"
 				bg="gray.900"
 				_hover={{ bg: 'gray.800' }}

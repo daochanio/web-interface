@@ -9,7 +9,6 @@ import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { getVoteValue, VoteType } from '../../common/constants'
 import { useState, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { AuthController } from './AuthController'
 import { getCommentVoteType, setCommentVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
@@ -38,18 +37,18 @@ export function CommentComponent({ comment }: { comment: Comment }) {
 						</Text>
 					</Box>
 				</Flex>
-				<AuthController>
-					<VoteComponent threadId={comment.threadId} commentId={comment.id} count={comment.votes} isDisabled={true} />
-					<ReplyToCommentButton repliedToCommentId={comment.id} isDisabled={true} />
-				</AuthController>
+				<VoteComponent threadId={comment.threadId} commentId={comment.id} count={comment.votes} />
+				<ReplyToCommentButton repliedToCommentId={comment.id} />
 			</Box>
 		</Box>
 	)
 }
 
-function ReplyToCommentButton({ repliedToCommentId, isDisabled }: { repliedToCommentId: string; isDisabled: boolean }) {
+function ReplyToCommentButton({ repliedToCommentId }: { repliedToCommentId: string }) {
 	const intl = useIntl()
 	const [isOpen, setIsOpen] = useState(false)
+	const { safeInvoke } = useAuth()
+
 	return (
 		<>
 			<Button
@@ -58,8 +57,7 @@ function ReplyToCommentButton({ repliedToCommentId, isDisabled }: { repliedToCom
 				bg="gray.900"
 				_hover={{ bg: 'gray.700' }}
 				leftIcon={<Icon as={RxChatBubble} w={4} h={4} color="brand.200" />}
-				isDisabled={isDisabled}
-				onClick={() => setIsOpen(true)}
+				onClick={safeInvoke(() => setIsOpen(true))}
 			>
 				{intl.formatMessage({
 					id: 'reply-to-comment',
@@ -128,20 +126,10 @@ function reducer(state: State, action: { type: string; payload?: VoteType }): St
 	}
 }
 
-function VoteComponent({
-	threadId,
-	commentId,
-	count,
-	isDisabled,
-}: {
-	threadId: string
-	commentId: string
-	count: number
-	isDisabled: boolean
-}) {
+function VoteComponent({ threadId, commentId, count }: { threadId: string; commentId: string; count: number }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { token, address } = useAuth()
+	const { token, address, safeInvoke } = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -229,8 +217,7 @@ function VoteComponent({
 						<Icon as={BiUpvote} w={4} h={4} color="brand.200" />
 					)
 				}
-				isDisabled={isDisabled}
-				onClick={() => onClick(VoteType.Upvote)}
+				onClick={safeInvoke(() => onClick(VoteType.Upvote))}
 				variant="ghost"
 				bg="gray.900"
 				_hover={{ bg: 'gray.800' }}
@@ -240,7 +227,6 @@ function VoteComponent({
 			{votes}
 			<IconButton
 				aria-label="downvote"
-				isDisabled={isDisabled}
 				icon={
 					voteType === VoteType.Downvote ? (
 						<Icon as={GoArrowDown} w={5} h={5} color="brand.200" />
@@ -248,7 +234,7 @@ function VoteComponent({
 						<Icon as={BiDownvote} w={4} h={4} color="brand.200" />
 					)
 				}
-				onClick={() => onClick(VoteType.Downvote)}
+				onClick={safeInvoke(() => onClick(VoteType.Downvote))}
 				variant="ghost"
 				bg="gray.900"
 				_hover={{ bg: 'gray.800' }}

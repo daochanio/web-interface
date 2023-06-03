@@ -31,6 +31,21 @@ import { useConnect, useAccount, useDisconnect } from 'wagmi'
 import useSignin from '../../../hooks/useSignin'
 import useUser from '../../../hooks/useUser'
 import ProfileDisplay from '../../common/ProfileDisplay'
+import { create } from 'zustand'
+
+interface ConnectionState {
+	isOpen: boolean
+	onOpen: () => void
+	onClose: () => void
+}
+
+// The connection drawer being open is provided as global state with zustand.
+// This way other components can open the drawer from anyware in the app when the user needs to connect.
+export const useConnectionStore = create<ConnectionState>()((set) => ({
+	isOpen: false,
+	onOpen: () => set(() => ({ isOpen: true })),
+	onClose: () => set(() => ({ isOpen: false })),
+}))
 
 // General idea: A multi-step modal dialog that walks the user through the signup process:
 // 1. Connect wallet
@@ -40,7 +55,7 @@ import ProfileDisplay from '../../common/ProfileDisplay'
 
 export default function ConnectionButton() {
 	const intl = useIntl()
-	const { isOpen, onOpen, onClose } = useDisclosure()
+	const { isOpen, onOpen, onClose } = useConnectionStore()
 	const btnRef = React.useRef(null)
 
 	return (
