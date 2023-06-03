@@ -30,7 +30,7 @@ export default function useSignin({ onSuccess }: { onSuccess?: () => void } = {}
 			toast({
 				title: intl.formatMessage({
 					id: 'signing-in-info',
-					defaultMessage: 'Check your wallet for a sign message request!',
+					defaultMessage: 'Check your wallet for a message signing request!',
 				}),
 				status: 'info',
 				duration: 5000,
