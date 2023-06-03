@@ -19,8 +19,8 @@ import {
 } from '@chakra-ui/react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from 'react-icons/md'
-import ConnectButton from './connectButton'
 import { Routes } from '../../common/routes'
+import Profile from './profile'
 
 interface NavItem {
 	label: string
@@ -80,7 +80,7 @@ function Navbar() {
 					{!isMobile && <DesktopNav navItems={NAV_ITEMS} />}
 					<Box flexGrow={1} />
 					<Box mt={1}>
-						<ConnectButton />
+						<Profile />
 					</Box>
 				</Flex>
 				{isMobile && (

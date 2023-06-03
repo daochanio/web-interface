@@ -1,10 +1,9 @@
 import { GetWalletClientResult } from '@wagmi/core'
 import { VoteType } from './constants'
-import { getToken, setToken } from './storage'
 
 export type Thread = {
 	id: string
-	address: string
+	user: User
 	title: string
 	content: string
 	image?: Image
@@ -23,7 +22,7 @@ export type Image = {
 
 export type Comment = {
 	id: string
-	address: string
+	user: User
 	threadId: string
 	content: string
 	image?: Image
@@ -32,6 +31,15 @@ export type Comment = {
 	createdAt: string
 	updatedAt: string
 	votes: number
+}
+
+export type User = {
+	address: string
+	ensName?: string
+	ensAvatar?: Image
+	reputation: string
+	createAt: string
+	updatedAt?: string
 }
 
 export type Challenge = {
@@ -58,6 +66,12 @@ export type Page = {
 export type APIResponse<T> = {
 	data: T
 	nextPage?: Page
+}
+
+export async function getUserByAddress({ address }: { address: string }) {
+	return api<User>(`/users/${address}`, {
+		method: 'GET',
+	})
 }
 
 export async function getThreadById({ id, offset, limit }: { id: string; offset: number; limit: number }) {
@@ -89,29 +103,29 @@ export async function getThreads({ limit }: { limit: number }) {
 export async function createThread({
 	title,
 	content,
-	walletClient,
+	token,
 	image,
 }: {
 	title: string
 	content: string
 	image: File
-	walletClient?: GetWalletClientResult
+	token?: string
 }) {
 	const {
 		data: { fileName: imageFileName },
-	} = await uploadImage({ image, walletClient })
+	} = await uploadImage({ image, token })
 
 	return api<Thread>('/threads', {
 		method: 'POST',
 		body: JSON.stringify({ title, content, imageFileName }),
-		walletClient,
+		token,
 	})
 }
 
 export async function createComment({
 	threadId,
 	content,
-	walletClient,
+	token,
 	image,
 	repliedToCommentId,
 }: {
@@ -119,42 +133,42 @@ export async function createComment({
 	content: string
 	image: File
 	repliedToCommentId?: string
-	walletClient?: GetWalletClientResult
+	token?: string
 }) {
 	const {
 		data: { fileName: imageFileName },
-	} = await uploadImage({ image, walletClient })
+	} = await uploadImage({ image, token })
 
 	return api<Comment>(`/threads/${threadId}/comments`, {
 		method: 'POST',
 		body: JSON.stringify({ threadId, content, imageFileName, repliedToCommentId }),
-		walletClient,
+		token,
 	})
 }
 
-export async function uploadImage({ image, walletClient }: { image: File; walletClient?: GetWalletClientResult }) {
+export async function uploadImage({ image, token }: { image: File; token?: string }) {
 	const formData = new FormData()
 	formData.append('image', image)
 
 	return api<UploadImageResponse>('/images', {
 		method: 'POST',
 		body: formData,
-		walletClient,
+		token,
 	})
 }
 
 export async function createThreadVote({
 	threadId,
 	voteType,
-	walletClient,
+	token,
 }: {
 	threadId: string
 	voteType: VoteType
-	walletClient?: GetWalletClientResult
+	token?: string
 }) {
 	return api<Thread>(`/threads/${threadId}/votes/${voteType}`, {
 		method: 'PUT',
-		walletClient,
+		token,
 	})
 }
 
@@ -162,16 +176,16 @@ export async function createCommentVote({
 	threadId,
 	commentId,
 	voteType,
-	walletClient,
+	token,
 }: {
 	threadId: string
 	commentId: string
 	voteType: VoteType
-	walletClient?: GetWalletClientResult
+	token?: string
 }) {
 	return api<Comment>(`/threads/${threadId}/comments/${commentId}/votes/${voteType}`, {
 		method: 'PUT',
-		walletClient,
+		token,
 	})
 }
 
@@ -179,12 +193,7 @@ type QueryParam = { key: string; value: string | number }
 
 async function api<T>(
 	resource: string,
-	{
-		method,
-		body,
-		queryParams,
-		walletClient,
-	}: { method: string; body?: BodyInit; queryParams?: QueryParam[]; walletClient?: GetWalletClientResult }
+	{ method, body, queryParams, token }: { method: string; body?: BodyInit; queryParams?: QueryParam[]; token?: string }
 ): Promise<APIResponse<T>> {
 	const options: RequestInit = {
 		method,
@@ -192,11 +201,9 @@ async function api<T>(
 	if (body) {
 		options.body = body
 	}
-	if (walletClient) {
-		const { token, address } = await signin({ walletClient })
+	if (token) {
 		options.headers = {
 			Authorization: `Bearer ${token}`,
-			'X-Address': address,
 		}
 	}
 
@@ -219,23 +226,12 @@ async function api<T>(
 	return {} as APIResponse<T>
 }
 
-export async function signin({
-	walletClient,
-	noCache,
-}: {
-	walletClient: GetWalletClientResult
-	noCache?: boolean
-}): Promise<{ token: string; address: string; cached: boolean }> {
+export async function signin({ walletClient }: { walletClient: GetWalletClientResult }) {
 	if (!walletClient) {
 		throw new Error('No wallet client')
 	}
 
 	const address = walletClient.account.address
-	const cachedToken = getToken(address)
-
-	if (!noCache && cachedToken) {
-		return { token: cachedToken, address, cached: true }
-	}
 
 	let response = await fetch(`${import.meta.env.VITE_DAOCHAN_API_BASE_URL}/signin/${address}`, {
 		method: 'GET',
@@ -264,7 +260,5 @@ export async function signin({
 		data: { token },
 	}: APIResponse<Token> = await response.json()
 
-	setToken(address, token)
-
-	return { token, address, cached: false }
+	return { token, address }
 }

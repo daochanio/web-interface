@@ -1,6 +1,5 @@
-import { Button, Image } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { APIResponse, Comment, createCommentVote } from '../../common/api'
-import { useAccount, useWalletClient } from 'wagmi'
 import { RxChatBubble } from 'react-icons/rx'
 import { CreateCommentModal } from '../common/CreateCommentModal'
 import { Icon, IconButton, useToast } from '@chakra-ui/react'
@@ -10,19 +9,41 @@ import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { getVoteValue, VoteType } from '../../common/constants'
 import { useState, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { ConnectController } from './ConnectController'
+import { AuthController } from './AuthController'
 import { getCommentVoteType, setCommentVoteType } from '../../common/storage'
+import useAuth from '../../hooks/useAuth'
+import ProfileDisplay from './ProfileDisplay'
 
 export function CommentComponent({ comment }: { comment: Comment }) {
+	const intl = useIntl()
+
 	return (
-		<>
-			{comment.image && <Image src={comment.image.url} maxWidth={250} maxHeight={250} />}
-			<p>{comment.content}</p>
-			<ConnectController>
-				<VoteComponent threadId={comment.threadId} commentId={comment.id} count={comment.votes} isDisabled={true} />
-				<ReplyToCommentButton repliedToCommentId={comment.id} isDisabled={true} />
-			</ConnectController>
-		</>
+		<Box border="1px solid gray" borderRadius={5}>
+			<Box margin={3}>
+				<Flex alignItems="center">
+					<Flex grow={1} />
+					<ProfileDisplay user={comment.user} />
+				</Flex>
+				<Flex>
+					<Flex grow={1} />
+					<Text fontSize="xs" color="gray.400">
+						{comment.user.reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
+					</Text>
+				</Flex>
+				<Flex>
+					{comment.image && <Image src={comment.image.url} maxWidth={250} maxHeight={250} />}
+					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
+						<Text flex={1} p={3}>
+							{comment.content}
+						</Text>
+					</Box>
+				</Flex>
+				<AuthController>
+					<VoteComponent threadId={comment.threadId} commentId={comment.id} count={comment.votes} isDisabled={true} />
+					<ReplyToCommentButton repliedToCommentId={comment.id} isDisabled={true} />
+				</AuthController>
+			</Box>
+		</Box>
 	)
 }
 
@@ -120,8 +141,7 @@ function VoteComponent({
 }) {
 	const toast = useToast()
 	const intl = useIntl()
-	const { data: walletClient } = useWalletClient()
-	const { address } = useAccount()
+	const { token, address } = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...initialState, activeVotes: count })
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -190,7 +210,7 @@ function VoteComponent({
 		}
 		const newVoteType = state.activeVoteType === clickedVoteType ? VoteType.Unvote : clickedVoteType
 		dispatch({ type: 'SET_PENDING', payload: newVoteType })
-		mutate({ threadId, commentId, walletClient, voteType: newVoteType })
+		mutate({ threadId, commentId, token, voteType: newVoteType })
 	}
 
 	// optimistically take the pending data if present

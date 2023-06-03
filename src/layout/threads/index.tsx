@@ -9,11 +9,12 @@ import { useState } from 'react'
 import { HiPlus } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import { CreateThreadModal } from '../common/CreateThreadModal'
-import { ConnectController } from '../common/ConnectController'
+import { AuthController } from '../common/AuthController'
 
 const THREAD_PAGE_SIZE = 10
 
 export default function Home() {
+	const intl = useIntl()
 	const { data, isLoading, isError, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
 		queryKey: ['threads'],
 		queryFn: () => getThreads({ limit: THREAD_PAGE_SIZE }),
@@ -32,7 +33,7 @@ export default function Home() {
 
 	return (
 		<>
-			<Flex>
+			<Flex mb={5}>
 				<Flex grow={1} />
 				<CreateThreadButton />
 			</Flex>
@@ -42,7 +43,9 @@ export default function Home() {
 						{group.data.map((thread) => (
 							<ListItem key={thread.id}>
 								<ThreadHeader thread={thread} />
-								<Button onClick={() => navigate(`/threads/${thread.id}`)}>View</Button>
+								<Button my={5} onClick={() => navigate(`/threads/${thread.id}`)}>
+									{intl.formatMessage({ id: 'view', defaultMessage: 'View' })}
+								</Button>
 							</ListItem>
 						))}
 					</Fragment>
@@ -62,14 +65,14 @@ function CreateThreadButton() {
 
 	return (
 		<>
-			<ConnectController>
+			<AuthController>
 				<Button rightIcon={<Icon as={HiPlus} mt={1} w={3} h={3} color="gray.900" />} onClick={() => setIsOpen(true)}>
 					{intl.formatMessage({
 						id: 'create-a-thread',
 						defaultMessage: 'New Thread',
 					})}
 				</Button>
-			</ConnectController>
+			</AuthController>
 			<CreateThreadModal isOpen={isOpen} close={() => setIsOpen(false)} />
 		</>
 	)
