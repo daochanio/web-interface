@@ -30,6 +30,21 @@ const config = {
 			900: '#121212',
 		},
 	},
+	zIndices: {
+		// modified to ensure the wallet connect modal is on top of the connection drawer (zIndex 89 at the time of writing)
+		// all the other zIndices are scaled to avoid weird overlaps
+		base: 0,
+		docked: 10,
+		dropdown: 20,
+		sticky: 30,
+		banner: 40,
+		overlay: 50,
+		modal: 60, // <- this needs to be lower than wallet connect zindex
+		popover: 70,
+		skipLink: 80,
+		toast: 90,
+		tooltip: 100,
+	},
 	styles: {
 		global: {
 			body: {

@@ -136,20 +136,22 @@ function ConnectWalletStep({ goToNext }: { goToNext: () => void }) {
 
 	return (
 		<Flex direction="column">
-			{connectors.map((connector) => (
-				<Button
-					key={connector.id}
-					height={50}
-					m={1}
-					isDisabled={!connector.ready || (isLoading && connector.id !== pendingConnector?.id)}
-					isLoading={isLoading && connector.id === pendingConnector?.id}
-					onClick={() => connect({ connector })}
-					justifyContent="left"
-				>
-					<Image src={`/logos/${connector.id}.svg`} w={10} h={10} ml={5} mr={3} />
-					<Text fontWeight="bold">{connector.name}</Text>
-				</Button>
-			))}
+			{connectors
+				.filter((connector) => connector.ready)
+				.map((connector) => (
+					<Button
+						key={connector.id}
+						height={50}
+						m={1}
+						isDisabled={!connector.ready || (isLoading && connector.id !== pendingConnector?.id)}
+						isLoading={isLoading && connector.id === pendingConnector?.id}
+						onClick={() => connect({ connector })}
+						justifyContent="left"
+					>
+						<Image src={`/logos/${connector.id}.svg`} w={10} h={10} ml={5} mr={3} />
+						<Text fontWeight="bold">{connector.name}</Text>
+					</Button>
+				))}
 		</Flex>
 	)
 }
