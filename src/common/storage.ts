@@ -1,19 +1,5 @@
 import { VoteType } from './constants'
 
-export function getSignedUp(address: string | undefined): boolean {
-	if (!address) {
-		return false
-	}
-	return getItem('signedup', address) === 'true'
-}
-
-export function setSignedUp(address: string | undefined, signedUp: boolean) {
-	if (!address) {
-		return
-	}
-	setItem('signedup', address, signedUp ? 'true' : 'false')
-}
-
 export function getToken(address: string | undefined): string | undefined {
 	if (!address) {
 		return
