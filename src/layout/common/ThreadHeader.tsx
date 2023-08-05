@@ -30,7 +30,7 @@ export function ThreadHeader({ thread: { id, title, image, content, votes, user 
 					</Text>
 				</Flex>
 				<Flex>
-					{image && <Image flex={1} m={2} src={image.url} maxWidth={250} maxHeight={250} />}
+					{image && <Image flex={1} m={2} src={image.thumbnailUrl} maxWidth={250} maxHeight={250} />}
 					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
 						<Text flex={1} p={3}>
 							{content}

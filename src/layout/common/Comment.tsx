@@ -30,7 +30,7 @@ export function CommentComponent({ comment }: { comment: Comment }) {
 					</Text>
 				</Flex>
 				<Flex>
-					{comment.image && <Image src={comment.image.url} maxWidth={250} maxHeight={250} />}
+					{comment.image && <Image src={comment.image.thumbnailUrl} maxWidth={250} maxHeight={250} />}
 					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
 						<Text flex={1} p={3}>
 							{comment.content}

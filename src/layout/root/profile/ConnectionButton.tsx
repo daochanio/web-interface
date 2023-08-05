@@ -13,7 +13,6 @@ import {
 	Box,
 	Image,
 	Text,
-	useDisclosure,
 	Drawer,
 	DrawerBody,
 	DrawerCloseButton,
