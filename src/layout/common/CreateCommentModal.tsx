@@ -96,7 +96,7 @@ export function CreateCommentModal({
 						/>
 						<Input
 							type="file"
-							accept="image/*"
+							accept="image/jpeg,image/png,image/gif,image/webp,video/mp4"
 							onChange={(event) => {
 								if (!event.target.files || event.target.files.length < 1) {
 									toast({

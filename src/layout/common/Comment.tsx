@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { APIResponse, Comment, createCommentVote } from '../../common/api'
 import { RxChatBubble } from 'react-icons/rx'
 import { CreateCommentModal } from '../common/CreateCommentModal'
@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl'
 import { getCommentVoteType, setCommentVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
+import Image from './Image'
 
 export function CommentComponent({ comment }: { comment: Comment }) {
 	const intl = useIntl()
@@ -30,7 +31,7 @@ export function CommentComponent({ comment }: { comment: Comment }) {
 					</Text>
 				</Flex>
 				<Flex>
-					{comment.image && <Image src={comment.image.thumbnailUrl} maxWidth={250} maxHeight={250} />}
+					{comment.image && <Image image={comment.image} width={300} height={300} />}
 					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
 						<Text flex={1} p={3}>
 							{comment.content}

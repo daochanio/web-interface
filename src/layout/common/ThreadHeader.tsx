@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Flex, Text } from '@chakra-ui/react'
 import { APIResponse, Thread } from '../../common/api'
 import { Icon, IconButton, useToast } from '@chakra-ui/react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -11,6 +11,7 @@ import { getVoteValue, VoteType } from '../../common/constants'
 import { getThreadVoteType, setThreadVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
+import Image from './Image'
 
 export function ThreadHeader({ thread: { id, title, image, content, votes, user } }: { thread: Thread }) {
 	const intl = useIntl()
@@ -30,7 +31,7 @@ export function ThreadHeader({ thread: { id, title, image, content, votes, user 
 					</Text>
 				</Flex>
 				<Flex>
-					{image && <Image flex={1} m={2} src={image.thumbnailUrl} maxWidth={250} maxHeight={250} />}
+					{image && <Image image={image} width={300} height={300} />}
 					<Box border="1px solid gray" borderRadius={5} width="100%" m={2}>
 						<Text flex={1} p={3}>
 							{content}

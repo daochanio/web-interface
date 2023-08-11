@@ -16,8 +16,13 @@ export type Thread = {
 
 export type Image = {
 	fileName: string
-	originalUrl: string
-	thumbnailUrl: string
+	original: ImageHeader
+	formatted: ImageHeader
+}
+
+export type ImageHeader = {
+	url: string
+	contentType: string
 }
 
 export type Comment = {
@@ -36,15 +41,10 @@ export type Comment = {
 export type User = {
 	address: string
 	ensName?: string
-	ensAvatar?: Avatar
+	ensAvatar?: Image
 	reputation: string
 	createAt: string
 	updatedAt?: string
-}
-
-export type Avatar = {
-	fileName: string
-	url: string
 }
 
 export type Challenge = {
