@@ -14,7 +14,7 @@ export default function Image({
 	const { url, contentType } = image.formatted
 	if (contentType.startsWith('video')) {
 		return (
-			<video autoPlay muted loop width={width} height={height} style={{ borderRadius: borderRadius }}>
+			<video autoPlay playsInline muted loop width={width} height={height} style={{ borderRadius: borderRadius }}>
 				<source src={url} type={contentType} />
 			</video>
 		)
