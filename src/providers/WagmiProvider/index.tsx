@@ -1,14 +1,21 @@
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import { arbitrum, arbitrumGoerli } from 'wagmi/chains'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { arbitrum, foundry } from 'wagmi/chains'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { createPublicClient, http } from 'viem'
 
 const { chains } = configureChains(
-	[import.meta.env.DEV ? arbitrumGoerli : arbitrum],
-	[alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_API_KEY ?? '' })]
+	[import.meta.env.DEV ? foundry : arbitrum],
+	[
+		jsonRpcProvider({
+			rpc: () => ({
+				http: import.meta.env.VITE_PROVIDER_HTTP_URL,
+				wss: import.meta.env.VITE_PROVIDER_WS_URL,
+			}),
+		}),
+	]
 )
 
 const walletConnectConnector = new WalletConnectConnector({
@@ -34,7 +41,7 @@ const config = createConfig({
 	autoConnect: true,
 	connectors: [walletConnectConnector, metaMaskConnector, coinbaseWalletConnector],
 	publicClient: createPublicClient({
-		chain: import.meta.env.DEV ? arbitrumGoerli : arbitrum,
+		chain: import.meta.env.DEV ? foundry : arbitrum,
 		transport: http(),
 	}),
 })

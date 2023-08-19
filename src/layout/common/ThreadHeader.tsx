@@ -7,14 +7,16 @@ import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
 import { useIntl } from 'react-intl'
 import { createThreadVote } from '../../common/api'
-import { getVoteValue, VoteType } from '../../common/constants'
+import { getVoteValue, REPUTATION_DECIMALS, VoteType } from '../../common/constants'
 import { getThreadVoteType, setThreadVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
 import Image from './Image'
+import useDisplayNumber from '../../hooks/useDisplayNumber'
 
 export function ThreadHeader({ thread: { id, title, image, content, votes, user } }: { thread: Thread }) {
 	const intl = useIntl()
+	const reputation = useDisplayNumber(user.reputation, REPUTATION_DECIMALS)
 
 	return (
 		<Box border="1px solid gray" borderRadius={5}>
@@ -27,7 +29,7 @@ export function ThreadHeader({ thread: { id, title, image, content, votes, user 
 				<Flex>
 					<Flex grow={1} />
 					<Text fontSize="xs" color="gray.400">
-						{user.reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
+						{reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
 					</Text>
 				</Flex>
 				<Flex>

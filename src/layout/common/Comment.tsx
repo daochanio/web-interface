@@ -6,16 +6,18 @@ import { Icon, IconButton, useToast } from '@chakra-ui/react'
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 import { BiDownvote, BiUpvote } from 'react-icons/bi'
 import { GoArrowDown, GoArrowUp } from 'react-icons/go'
-import { getVoteValue, VoteType } from '../../common/constants'
+import { getVoteValue, REPUTATION_DECIMALS, VoteType } from '../../common/constants'
 import { useState, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { getCommentVoteType, setCommentVoteType } from '../../common/storage'
 import useAuth from '../../hooks/useAuth'
 import ProfileDisplay from './ProfileDisplay'
 import Image from './Image'
+import useDisplayNumber from '../../hooks/useDisplayNumber'
 
 export function CommentComponent({ comment }: { comment: Comment }) {
 	const intl = useIntl()
+	const reputation = useDisplayNumber(comment.user.reputation, REPUTATION_DECIMALS)
 
 	return (
 		<Box border="1px solid gray" borderRadius={5}>
@@ -27,7 +29,7 @@ export function CommentComponent({ comment }: { comment: Comment }) {
 				<Flex>
 					<Flex grow={1} />
 					<Text fontSize="xs" color="gray.400">
-						{comment.user.reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
+						{reputation} {intl.formatMessage({ id: 'reputation', defaultMessage: 'Reputation' })}
 					</Text>
 				</Flex>
 				<Flex>

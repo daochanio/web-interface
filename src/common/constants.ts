@@ -15,3 +15,5 @@ export function getVoteValue(voteType: VoteType | undefined) {
 			return 0
 	}
 }
+
+export const REPUTATION_DECIMALS = 18
